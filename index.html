@@ -58,7 +58,13 @@ function add(i){carrito.push(productos[i]);upd()}
 function upd(){let t=carrito.reduce((s,p)=>s+p.precio,0);document.getElementById('total').innerText=carrito.length?`Total: $${t}`:'Carrito vacío';document.getElementById('count').innerText=carrito.length?`(${carrito.length})`:'';}
 function abrirCheckout(){if(!carrito.length)return alert('Agrega productos');let t=carrito.reduce((s,p)=>s+p.precio,0);let lista=carrito.map(p=>`- ${p.name} $${p.precio}`).join('\n');document.getElementById('detalle').innerText=lista;document.getElementById('totalModal').innerText=`Total a pagar: $${t}`;document.getElementById('modal').style.display='flex';}
 function cerrar(){document.getElementById('modal').style.display='none';}
-function enviarWA(){let t=carrito.reduce((s,p)=>s+p.precio,0);let l=carrito.map(p=>`- ${p.name} $${p.precio}`).join('%0A');let msg=`Hola meat & love! Quiero pedir:%0A${l}%0ATotal $${t}%0A%0AMi nombre es:`;window.open(`https://wa.me/${WA_NUM}?text=${msg}`,'_blank');}
+function enviarWA(){
+  let t=carrito.reduce((s,p)=>s+p.precio,0);
+  let lista=carrito.map(p=>`• ${p.name} (${p.peso}) - $${p.precio}`).join('\n');
+  let texto=`Hola meat & love! ♡\n\nQuiero pedir:\n${lista}\n\nTotal: $${t}\n\nMi nombre es:\nMi direccion es:`;
+  let url=`https://wa.me/${WA_NUM}?text=${encodeURIComponent(texto)}`;
+  window.open(url,'_blank');
+}
 function pagarMP(){window.open(MP_LINK,'_blank');}
 </script>
 </body>
