@@ -1,1 +1,81 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>meat & love</title><style>body{margin:0;font-family:Helvetica;background:#E8D6B7;color:#1E3A2F;padding-bottom:180px}header{text-align:center;padding:24px;background:#F5EBDA}header img{width:190px;height:190px;border-radius:50%;display:block;margin:0 auto 12px;object-fit:cover}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;max-width:1000px;margin:0 auto}.card{background:#fff;border-radius:16px;padding:10px}.card img{width:100%;height:280px;object-fit:cover;border-radius:12px}.btn{width:100%;background:#1E3A2F;color:#fff;border:0;padding:10px;border-radius:10px;font-weight:800}.cart{position:fixed;bottom:20px;left:12px;right:12px;background:#1E3A2F;color:#fff;padding:14px;border-radius:16px;z-index:9999;display:flex;flex-direction:column;gap:10px}.cart-actions{display:flex;gap:8px}.btn-mp{flex:1;background:#009EE3;color:#fff;border:0;padding:14px;border-radius:10px;font-weight:900}.btn-wa{flex:1;background:#fff;color:#1E3A2F;border:0;padding:14px;border-radius:10px;font-weight:900}</style></head><body><header><img src="img/logo.png" alt="meat & love"><h2>meat & love ♡</h2><p>BUENA TIERRA • BUENA CARNE • BUENA ONDA</p></header><div class="grid" id="grid"></div><div class="cart"><b id="total">Carrito vacío</b><div class="cart-actions"><button class="btn-mp" onclick="pagar()">Pagar con Mercado Pago</button><button class="btn-wa" onclick="wa()">WhatsApp</button></div></div><script>const MP="https://link.mercadopago.com.mx/meatnlove";const prods=[["CECINA",333],["CHORIZO",229],["COSTILLAS",438],["LOMO",250],["MOLIDA",240],["TOCINO",271],["RETAZO",206],["FILETE",385],["PICANA",307],["HUEVO",156],["ARRACHERA",450],["BISTEC",320]];let cart=[];const grid=document.getElementById('grid');const bases=["cecina","chorizo","costillas","lomo","molida","tocino","retazo","filete","picana","huevo","arrachera","bistec"];bases.forEach((b,i)=>{grid.innerHTML+=`<div class=card><img src="img/${b}.jpeg" onerror="this.src='img/${b}.jpg'"><h3>${prods[i][0]}</h3><b>$${prods[i][1]}</b><br><button class=btn onclick="add(${i})">Agregar</button></div>`});function add(i){cart.push(prods[i]);let t=cart.reduce((s,p)=>s+p[1],0);document.getElementById('total').innerText=`Total: $${t} (${cart.length})`;}function wa(){if(!cart.length)return alert('Agrega algo');let t=cart.reduce((s,p)=>s+p[1],0);let l=cart.map(p=>`- ${p[0]} $${p[1]}`).join('%0A');window.open('https://wa.me/525611281892?text=Pedido:%0A'+l+'%0ATotal $'+t,'_blank');}function pagar(){if(!cart.length)return alert('Agrega algo');wa();setTimeout(()=>window.open(MP,'_blank'),600);}</script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>meat & love</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Helvetica,Arial;background:#E8D6B7;color:#1E3A2F;padding-bottom:180px}
+header{text-align:center;padding:28px 20px 16px;background:#F5EBDA}
+header img{width:190px;height:190px;border-radius:50%;display:block;margin:0 auto 12px;object-fit:cover;box-shadow:0 8px 24px rgba(0,0,0,.18);background:#D9C3A0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;max-width:1100px;margin:0 auto}
+@media(min-width:700px){.grid{grid-template-columns:1fr 1fr 1fr}}
+.card{background:#fff;border-radius:16px;padding:10px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.card img{width:100%;height:260px;object-fit:cover;border-radius:12px}
+.card h3{margin:10px 0 2px;font-size:13px;min-height:32px}
+.price{font-weight:900;margin:6px 0;font-size:16px}
+.btn{width:100%;background:#1E3A2F;color:#F5EBDA;border:0;padding:10px;border-radius:10px;font-weight:800;cursor:pointer}
+.cart{position:fixed;bottom:12px;left:12px;right:12px;background:#1E3A2F;color:#fff;padding:14px;border-radius:16px;display:flex;flex-direction:column;gap:10px;z-index:9999;box-shadow:0 -8px 30px rgba(0,0,0,.4)}
+.cart-actions{display:flex;gap:8px}
+.btn-mp{flex:1;background:#009EE3;color:#fff;border:0;padding:14px;border-radius:10px;font-weight:900;cursor:pointer}
+.btn-wa{flex:1;background:#25D366;color:#fff;border:0;padding:14px;border-radius:10px;font-weight:900;cursor:pointer}
+/* MODAL */
+#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;align-items:center;justify-content:center;padding:16px}
+#modalBox{background:#F5EBDA;border-radius:20px;padding:20px;max-width:420px;width:100%;color:#1E3A2F}
+</style>
+</head>
+<body>
+<header>
+<img src="img/logo.png" alt="meat and love">
+<p><b>BUENA TIERRA • BUENA CARNE • BUENA ONDA</b><br>carne fresca 85km de CDMX</p>
+</header>
+<div class="grid" id="grid"></div>
+
+<div class="cart">
+<div style="display:flex;justify-content:space-between;font-weight:900"><span id="total">Carrito vacío</span><span id="count"></span></div>
+<div class="cart-actions">
+<button class="btn-wa" onclick="abrirCheckout()">Pagar</button>
+</div>
+</div>
+
+<div id="modal" onclick="if(event.target==this)cerrar()">
+<div id="modalBox">
+<h2 style="margin:0 0 10px">Tu pedido ♡</h2>
+<div id="detalle" style="background:#fff;border-radius:12px;padding:12px;margin-bottom:12px;white-space:pre-wrap;font-size:14px"></div>
+<div style="font-weight:900;font-size:18px;margin-bottom:12px" id="totalModal"></div>
+<button class="btn-wa" style="width:100%;margin-bottom:8px" onclick="enviarWA()">1️⃣ Enviar pedido por WhatsApp</button>
+<button class="btn-mp" style="width:100%;margin-bottom:8px" onclick="pagarMP()">2️⃣ Pagar con Mercado Pago</button>
+<button class="btn" style="background:#E8D6B7;color:#1E3A2F" onclick="cerrar()">Seguir comprando</button>
+<p style="font-size:11px;margin-top:10px;opacity:.7">Te llega primero el WhatsApp para saber qué te pidieron. Después el cliente paga en Mercado Pago y te manda comprobante.</p>
+</div>
+</div>
+
+<script>
+const MP_LINK="https://link.mercadopago.com.mx/meatnlove";
+const WA_NUM="525611281892";
+const productos=[
+{name:"CECINA CON SAL DE MAR",peso:"500 g",precio:333,img:"img/cecina.jpeg"},
+{name:"CHORIZO",peso:"500 g",precio:229,img:"img/chorizo.jpg"},
+{name:"COSTILLAS BABY BACK",peso:"1 kg",precio:438,img:"img/costillas.jpeg"},
+{name:"LOMO DE CERDO",peso:"500 g",precio:250,img:"img/lomo.jpeg"},
+{name:"MOLIDA DE PESCUEZO",peso:"500 g",precio:240,img:"img/molida.jpeg"},
+{name:"TOCINO",peso:"250 g",precio:271,img:"img/tocino.jpg"},
+{name:"RETAZO CON HUESO",peso:"500 g",precio:206,img:"img/retazo.jpg"},
+{name:"FILETE DE CAÑA",peso:"500 g",precio:385,img:"img/filete.jpeg"},
+{name:"PICANA",peso:"500 g",precio:307,img:"img/picana.jpg"},
+{name:"HUEVO",peso:"30 pzas",precio:156,img:"img/huevo.jpg"},
+{name:"ARRACHERA",peso:"500 g",precio:450,img:"img/arrachera.jpeg"},
+{name:"BISTEC",peso:"500 g",precio:320,img:"img/bistec.jpeg"}
+];
+let carrito=[];const grid=document.getElementById('grid');
+productos.forEach((p,i)=>{grid.innerHTML+=`<div class=card><img src="${p.img}"><h3>${p.name}</h3><p>${p.peso}</p><div class=price>$${p.precio}</div><button class=btn onclick="add(${i})">Agregar</button></div>`});
+function add(i){carrito.push(productos[i]);upd()}
+function upd(){let t=carrito.reduce((s,p)=>s+p.precio,0);document.getElementById('total').innerText=carrito.length?`Total: $${t}`:'Carrito vacío';document.getElementById('count').innerText=carrito.length?`(${carrito.length})`:'';}
+function abrirCheckout(){if(!carrito.length)return alert('Agrega productos');let t=carrito.reduce((s,p)=>s+p.precio,0);let lista=carrito.map(p=>`- ${p.name} $${p.precio}`).join('\n');document.getElementById('detalle').innerText=lista;document.getElementById('totalModal').innerText=`Total a pagar: $${t}`;document.getElementById('modal').style.display='flex';}
+function cerrar(){document.getElementById('modal').style.display='none';}
+function enviarWA(){let t=carrito.reduce((s,p)=>s+p.precio,0);let l=carrito.map(p=>`- ${p.name} $${p.precio}`).join('%0A');let msg=`Hola meat & love! Quiero pedir:%0A${l}%0ATotal $${t}%0A%0AMi nombre es:`;window.open(`https://wa.me/${WA_NUM}?text=${msg}`,'_blank');}
+function pagarMP(){window.open(MP_LINK,'_blank');}
+</script>
+</body>
+</html>
