@@ -1,21 +1,36 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MEAT N LOVE</title>
-<style>
-body{font-family:Arial;background:#111;color:#fff;margin:0;padding:20px;text-align:center}
-h1{color:#ff3c00}
-.product{background:#222;padding:20px;margin:20px auto;max-width:400px;border-radius:15px}
-.product img{width:100%;border-radius:10px}
-button{background:#ff3c00;color:#fff;border:none;padding:12px 20px;border-radius:8px;font-size:16px;cursor:pointer}
-#cart{position:fixed;top:10px;right:10px;background:#fff;color:#000;padding:15px;border-radius:10px;max-width:300px}
-</style>
-</head>
-<body>
-<h1>MEAT N LOVE</h1>
-<div class="product">
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>meat & love</title><style>body{margin:0;font-family:Helvetica;background:#E8D6B7;color:#1E3A2F;padding-bottom:220px}header{text-align:center;padding:24px;background:#F5EBDA}header img{width:190px;height:190px;border-radius:50%;display:block;margin:0 auto 12px;object-fit:cover}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;max-width:1000px;margin:0 auto}.card{background:#fff;border-radius:16px;padding:10px;position:relative}.card img{width:100%;height:280px;object-fit:cover;border-radius:12px;background:#eee}.badge{position:absolute;top:14px;left:14px;background:#C0392B;color:#fff;font-size:11px;padding:4px 8px;border-radius:20px;font-weight:800}.btn{width:100%;background:#1E3A2F;color:#fff;border:0;padding:10px;border-radius:10px;font-weight:800;margin-top:6px}.cart{position:fixed;bottom:20px;left:12px;right:12px;background:#1E3A2F;color:#fff;padding:14px;border-radius:16px;z-index:9999;display:flex;flex-direction:column;gap:10px}.cart-actions{display:flex;gap:8px}.btn-stripe{flex:1;background:#635BFF;color:#fff;border:0;padding:14px;border-radius:10px;font-weight:900}.btn-wa{flex:1;background:#fff;color:#1E3A2F;border:0;padding:14px;border-radius:10px;font-weight:900}</style></head><body>
+<header><img src="logo.png"><h2>meat & love ♡</h2><p>BUENA TIERRA • BUENA CARNE • BUENA ONDA</p></header>
+<div class="grid" id="grid"></div>
+<div class="cart"><b id="total">Carrito vacío</b><small id="detalle">Envío CDMX $99</small><div class="cart-actions"><button class="btn-stripe" onclick="pagarStripe()">Pagar con Stripe</button><button class="btn-wa" onclick="wa()">WhatsApp</button></div></div>
+<script>
+const STRIPE="https://buy.stripe.com/4gMcN63Paciw2Hm7fX0VO01";
+const ENVIO=99;
+const prods=[
+["SIRLOIN 500g",333,"sirloin.jpg"],
+["MILANESA 500g",325,"milanesa.jpg"],
+["MOLIDA DIEZMILLO 500g",320,"molidadiezmillo.jpg"],
+["MOLIDA PESCUEZO 500g",240,"molida.jpg"],
+["ARRACHERA 500g",320,"arrachera.jpg"],
+["PAVO THANKSGIVING APARTADO 1kg",320,"pavoTG.jpg",true],
+["COSTILLA 500g",438,"costilla.jpg"],
+["CHORIZO 500g",229,"chorizo.jpg"],
+["BISTEC 500g",320,"bistec.jpg"],
+["LOMO 500g",250,"lomo.jpg"],
+["PICAÑA 500g",307,"picana.jpg"],
+["FILETE 500g",385,"filete.jpg"],
+["CECINA 500g",333,"cecina.jpg"],
+["HUEVO 30pzas",156,"huevo.jpg"],
+["RETAZO 500g",206,"retazo.jpg"]
+];
+let cart=[];const grid=document.getElementById('grid');
+prods.forEach((p,i)=>{
+  let badge=p[3]?`<span class="badge">LIMITADO 20</span>`:"";
+  grid.innerHTML+=`<div class="card">${badge}<img src="${p[2]}"><h3>${p[0]}</h3><b>$${p[1]}</b><br><button class="btn" onclick="add(${i})">Agregar</button></div>`;
+});
+function add(i){cart.push(prods[i]);let sub=cart.reduce((s,p)=>s+p[1],0);let tot=sub+ENVIO;document.getElementById('total').innerText=`Total con envío: $${tot} (${cart.length})`;document.getElementById('detalle').innerText=`Subtotal $${sub} + Envío $${ENVIO}`;}
+function wa(){if(!cart.length)return alert('Agrega algo');let sub=cart.reduce((s,p)=>s+p[1],0);let tot=sub+ENVIO;let l=cart.map(p=>`- ${p[0]} $${p[1]}`).join('%0A');window.open('https://wa.me/525611281892?text=Pedido:%0A'+l+'%0AEnvio $${ENVIO}%0ATotal $${tot}','_blank');}
+function pagarStripe(){if(!cart.length)return alert('Agrega algo');wa();setTimeout(()=>window.open(STRIPE,'_blank'),600);}
+</script></body></html>
 <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=500">
 <h3>Costillas BBQ Rack</h3><p>$650 MXN</p>
 <button onclick="addToCart('Costillas BBQ Rack',650)">Agregar</button>
