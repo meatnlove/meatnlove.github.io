@@ -1,41 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>meat & love</title>
 <style>
-body{margin:0;font-family:Helvetica,Arial;background:#E8D6B7;color:#1E3A2F;padding-bottom:220px}
-header{text-align:center;padding:24px;background:#F5EBDA}
-header img{width:190px;height:190px;border-radius:50%;display:block;margin:0 auto 12px;object-fit:cover}
+body{margin:0;font-family:Helvetica;background:#E8D6B7;color:#1E3A2F;padding-bottom:220px}
+header{text-align:center;padding:24px;background:#F5EBDA}header img{width:190px;height:190px;border-radius:50%;display:block;margin:0 auto 12px;object-fit:cover}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;max-width:1000px;margin:0 auto}
-.card{background:#fff;border-radius:16px;padding:10px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-.card img{width:100%;height:260px;object-fit:cover;border-radius:12px;background:#eee;display:block}
+.card{background:#fff;border-radius:16px;padding:10px}.card img{width:100%;height:260px;object-fit:cover;border-radius:12px;background:#eee;display:block}
 .btn{width:100%;background:#1E3A2F;color:#fff;border:0;padding:10px;border-radius:10px;font-weight:800;margin-top:6px}
 .cart{position:fixed;bottom:12px;left:12px;right:12px;background:#1E3A2F;color:#fff;padding:14px;border-radius:16px;z-index:9999;display:flex;flex-direction:column;gap:8px}
-.cart-actions{display:flex;gap:8px}
-.btn-stripe{flex:1;background:#635BFF;color:#fff;border:0;padding:14px;border-radius:10px;font-weight:900}
-.btn-wa{flex:1;background:#fff;color:#1E3A2F;border:0;padding:14px;border-radius:10px;font-weight:900}
+.cart-actions{display:flex;gap:8px}.btn-stripe{flex:1;background:#635BFF;color:#fff;border:0;padding:14px;border-radius:10px;font-weight:900}.btn-wa{flex:1;background:#fff;color:#1E3A2F;border:0;padding:14px;border-radius:10px;font-weight:900}
 </style>
 </head>
 <body>
-<header>
-<img src="img/logo.png">
-<h2>meat & love ♡</h2>
-<p>BUENA TIERRA • BUENA CARNE • BUENA ONDA</p>
-</header>
+<header><img src="img/logo.png"><h2>meat & love ♡</h2></header>
 <div class="grid" id="grid"></div>
-<div class="cart">
-<b id="total">Carrito vacío</b>
-<small id="det">Envío CDMX $99 • Stripe</small>
-<div class="cart-actions">
-<button class="btn-stripe" onclick="pagar()">Pagar con Stripe</button>
-<button class="btn-wa" onclick="wa()">WhatsApp</button>
-</div>
-</div>
+<div class="cart"><b id="total">Carrito vacío</b><small>Envío $99</small><div class="cart-actions"><button class="btn-stripe" onclick="pagar()">Pagar Stripe</button><button class="btn-wa" onclick="wa()">WhatsApp</button></div></div>
 <script>
-const STRIPE="https://buy.stripe.com/4gMcN63Paciw2Hm7fX0VO01";
-const ENVIO=99;
+const STRIPE="https://buy.stripe.com/4gMcN63Paciw2Hm7fX0VO01";const ENVIO=99;
 const prods=[
 ["SIRLOIN 500g",333,"sirloin.jpg"],
 ["TOCINO 500g",285,"tocino.jpg"],
@@ -43,21 +26,27 @@ const prods=[
 ["BISTEC 500g",320,"bistec.jpg"],
 ["CECINA 500g",333,"cecina.jpg"],
 ["CHORIZO 500g",229,"chorizo.jpg"],
-["COSTILLAS 500g",438,"costillas.jpg"],
+["COSTILLAS 500g",438,"costillas.jpg","costilla.jpg"],
 ["FILETE 500g",385,"filete.jpg"],
 ["HUEVO 30pzas",156,"huevo.jpg"],
 ["LOMO 500g",250,"lomo.jpg"],
 ["MILANESA 500g",325,"milanesa.jpg"],
 ["MOLIDA 500g",240,"molida.jpg"],
 ["MOLIDA DIEZMILLO 500g",320,"molidadiezmillo.jpg"],
-["PAVO TG 1kg",320,"pavoTG.jpg"],
+["PAVO TG 1kg",320,"pavoTG.jpg","pavotg.jpg","pavo.jpg"],
 ["PICAÑA 500g",307,"picana.jpg"],
 ["RETAZO 500g",206,"retazo.jpg"]
 ];
 let cart=[];const grid=document.getElementById('grid');
-prods.forEach((p,i)=>{grid.innerHTML+=`<div class="card"><img src="img/${p[2]}"><h3>${p[0]}</h3><b>$${p[1]}</b><br><button class="btn" onclick="add(${i})">Agregar</button></div>`});
-function add(i){cart.push(prods[i]);let s=cart.reduce((a,b)=>a+b[1],0);document.getElementById('total').innerText=`Total: $${s+ENVIO} (${cart.length})`;document.getElementById('det').innerText=`Subtotal $${s} + Envío $${ENVIO} = $${s+ENVIO}`}
-function wa(){if(!cart.length)return alert('Agrega algo');let s=cart.reduce((a,b)=>a+b[1],0);let l=cart.map(p=>`- ${p[0]} $${p[1]}`).join('%0A');window.open('https://wa.me/525611281892?text=Hola%20quiero:%0A'+l+'%0ATotal $${s+ENVIO}','_blank')}
+function imgTag(p){
+  let fallbacks = p.slice(2).map(f=>`img/${f}`).join("' , 'img/");
+  return `<img src="img/${p[2]}" onerror="let a=['${fallbacks}'];let i=a.indexOf(this.src.split('/').pop()? 'img/'+this.src.split('/').pop() : ''); let n=a.indexOf(this.getAttribute('src')); if(n+1<a.length){this.src=a[n+1]}">`;
+}
+prods.forEach((p,i)=>{
+  grid.innerHTML+=`<div class="card">${imgTag(p)}<h3>${p[0]}</h3><b>$${p[1]}</b><br><button class="btn" onclick="add(${i})">Agregar</button></div>`;
+});
+function add(i){cart.push(prods[i]);let s=cart.reduce((a,b)=>a+b[1],0);document.getElementById('total').innerText=`Total: $${s+ENVIO} (${cart.length})`}
+function wa(){if(!cart.length)return alert('Agrega algo');let s=cart.reduce((a,b)=>a+b[1],0);let l=cart.map(p=>`- ${p[0]}`).join('%0A');window.open('https://wa.me/525611281892?text=Pedido:%0A'+l+'%0ATotal $${s+ENVIO}','_blank')}
 function pagar(){if(!cart.length)return alert('Agrega algo');wa();setTimeout(()=>window.open(STRIPE,'_blank'),600)}
 </script>
 </body>
