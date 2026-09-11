@@ -1,74 +1,54 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>meat & love</title><style>body{margin:0;font-family:Helvetica;background:#E8D6B7;color:#1E3A2F;padding-bottom:220px}header{text-align:center;padding:24px;background:#F5EBDA}header img{width:190px;height:190px;border-radius:50%;display:block;margin:0 auto 12px;object-fit:cover}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;max-width:1000px;margin:0 auto}.card{background:#fff;border-radius:16px;padding:10px;position:relative}.card img{width:100%;height:280px;object-fit:cover;border-radius:12px;background:#eee}.badge{position:absolute;top:14px;left:14px;background:#C0392B;color:#fff;font-size:11px;padding:4px 8px;border-radius:20px;font-weight:800}.btn{width:100%;background:#1E3A2F;color:#fff;border:0;padding:10px;border-radius:10px;font-weight:800;margin-top:6px}.cart{position:fixed;bottom:20px;left:12px;right:12px;background:#1E3A2F;color:#fff;padding:14px;border-radius:16px;z-index:9999;display:flex;flex-direction:column;gap:10px}.cart-actions{display:flex;gap:8px}.btn-stripe{flex:1;background:#635BFF;color:#fff;border:0;padding:14px;border-radius:10px;font-weight:900}.btn-wa{flex:1;background:#fff;color:#1E3A2F;border:0;padding:14px;border-radius:10px;font-weight:900}</style></head><body>
-<header><img src="logo.png"><h2>meat & love ♡</h2><p>BUENA TIERRA • BUENA CARNE • BUENA ONDA</p></header>
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>meat & love</title>
+<style>body{margin:0;font-family:Helvetica;background:#E8D6B7;color:#1E3A2F;padding-bottom:220px}header{text-align:center;padding:24px;background:#F5EBDA}header img{width:190px;height:190px;border-radius:50%;display:block;margin:0 auto 12px;object-fit:cover}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;max-width:1000px;margin:0 auto}.card{background:#fff;border-radius:16px;padding:10px}.card img{width:100%;height:260px;object-fit:cover;border-radius:12px;background:#eee;display:block}.btn{width:100%;background:#1E3A2F;color:#fff;border:0;padding:10px;border-radius:10px;font-weight:800;margin-top:6px}.cart{position:fixed;bottom:12px;left:12px;right:12px;background:#1E3A2F;color:#fff;padding:14px;border-radius:16px;z-index:9999;display:flex;flex-direction:column;gap:8px}.cart-actions{display:flex;gap:8px}.btn-stripe{flex:1;background:#635BFF;color:#fff;border:0;padding:14px;border-radius:10px;font-weight:900}.btn-wa{flex:1;background:#fff;color:#1E3A2F;border:0;padding:14px;border-radius:10px;font-weight:900}</style></head><body>
+<header><img src="img/logo.png"><h2>meat & love ♡</h2></header>
 <div class="grid" id="grid"></div>
-<div class="cart"><b id="total">Carrito vacío</b><small id="detalle">Envío CDMX $99</small><div class="cart-actions"><button class="btn-stripe" onclick="pagarStripe()">Pagar con Stripe</button><button class="btn-wa" onclick="wa()">WhatsApp</button></div></div>
+<div class="cart"><b id="total">Carrito vacío</b><small id="det">Envío CDMX $99</small><div class="cart-actions"><button class="btn-stripe" id="btnPagar" onclick="pagar()">Pagar con Stripe</button><button class="btn-wa" onclick="wa()">WhatsApp</button></div></div>
 <script>
-const STRIPE="https://buy.stripe.com/4gMcN63Paciw2Hm7fX0VO01";
+const WORKER_URL="https://meatnlove-stripe.marinamagro.workers.dev";
 const ENVIO=99;
 const prods=[
-["SIRLOIN 500g",333,"sirloin.jpg"],
-["MILANESA 500g",325,"milanesa.jpg"],
-["MOLIDA DIEZMILLO 500g",320,"molidadiezmillo.jpg"],
-["MOLIDA PESCUEZO 500g",240,"molida.jpg"],
-["ARRACHERA 500g",320,"arrachera.jpg"],
-["PAVO THANKSGIVING APARTADO 1kg",320,"pavoTG.jpg",true],
-["COSTILLA 500g",438,"costilla.jpg"],
-["CHORIZO 500g",229,"chorizo.jpg"],
-["BISTEC 500g",320,"bistec.jpg"],
-["LOMO 500g",250,"lomo.jpg"],
-["PICAÑA 500g",307,"picana.jpg"],
-["FILETE 500g",385,"filete.jpg"],
-["CECINA 500g",333,"cecina.jpg"],
-["HUEVO 30pzas",156,"huevo.jpg"],
-["RETAZO 500g",206,"retazo.jpg"]
+["SIRLOIN 500g",333,"sirloin.jpg"],["TOCINO 500g",285,"tocino.jpg"],["ARRACHERA 500g",320,"arrachera.jpg"],["BISTEC 500g",320,"bistec.jpg"],["CECINA 500g",333,"cecina.jpg"],["CHORIZO 500g",229,"chorizo.jpg"],["COSTILLAS 500g",438,"costillas.jpg"],["FILETE 500g",385,"filete.jpg"],["HUEVO 30pzas",156,"huevo.jpg"],["LOMO 500g",250,"lomo.jpg"],["MILANESA 500g",325,"milanesa.jpg"],["MOLIDA 500g",240,"molida.jpg"],["MOLIDA DIEZMILLO 500g",320,"molidadiezmillo.jpg"],["PAVO TG 1kg",320,"pavoTG.jpg"],["PICAÑA 500g",307,"picana.jpg"],["RETAZO 500g",206,"retazo.jpg"]
 ];
-let cart=[];const grid=document.getElementById('grid');
+let cart=[]; const grid=document.getElementById('grid');
 prods.forEach((p,i)=>{
-  let badge=p[3]?`<span class="badge">LIMITADO 20</span>`:"";
-  grid.innerHTML+=`<div class="card">${badge}<img src="${p[2]}"><h3>${p[0]}</h3><b>$${p[1]}</b><br><button class="btn" onclick="add(${i})">Agregar</button></div>`;
+  let img = p[2]==='pavoTG.jpg'? `<img src="img/${p[2]}" onerror="this.src='img/pavotg.jpg'">` : p[2]==='costillas.jpg'? `<img src="img/${p[2]}" onerror="this.src='img/costilla.jpg'">` : `<img src="img/${p[2]}">`;
+  grid.innerHTML+=`<div class="card">${img}<h3>${p[0]}</h3><b>$${p[1]}</b><br><button class="btn" onclick="add(${i})">Agregar</button></div>`;
 });
-function add(i){cart.push(prods[i]);let sub=cart.reduce((s,p)=>s+p[1],0);let tot=sub+ENVIO;document.getElementById('total').innerText=`Total con envío: $${tot} (${cart.length})`;document.getElementById('detalle').innerText=`Subtotal $${sub} + Envío $${ENVIO}`;}
-function wa(){if(!cart.length)return alert('Agrega algo');let sub=cart.reduce((s,p)=>s+p[1],0);let tot=sub+ENVIO;let l=cart.map(p=>`- ${p[0]} $${p[1]}`).join('%0A');window.open('https://wa.me/525611281892?text=Pedido:%0A'+l+'%0AEnvio $${ENVIO}%0ATotal $${tot}','_blank');}
-function pagarStripe(){if(!cart.length)return alert('Agrega algo');wa();setTimeout(()=>window.open(STRIPE,'_blank'),600);}
-</script></body></html>
-<img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=500">
-<h3>Costillas BBQ Rack</h3><p>$650 MXN</p>
-<button onclick="addToCart('Costillas BBQ Rack',650)">Agregar</button>
-</div>
-<div class="product">
-<img src="https://images.unsplash.com/photo-1574672280600-4accfa5b6f98?w=500">
-<h3>Pavo Ahumado Entero</h3><p>$850 MXN</p>
-<button onclick="addToCart('Pavo Ahumado Entero',850)">Agregar</button>
-</div>
-<div id="cart">
-<h4>Carrito: <span id="count">0</span></h4>
-<div id="items"></div>
-<h4>Total: $<span id="total">0</span></h4>
-<button id="payBtn" onclick="pagar()">PAGAR</button>
-</div>
-<script>
-let cart=[];
-function addToCart(name,price){
-  let f=cart.find(i=>i.name===name);
-  if(f) f.qty++; else cart.push({name,price,qty:1});
+function add(i){
+  let existing = cart.find(c=>c.name===prods[i][0]);
+  if(existing) existing.qty++;
+  else cart.push({name:prods[i][0], price:prods[i][1], qty:1});
   render();
 }
 function render(){
-  document.getElementById('count').innerText=cart.reduce((s,i)=>s+i.qty,0);
-  document.getElementById('total').innerText=cart.reduce((s,i)=>s+i.price*i.qty,0);
-  document.getElementById('items').innerHTML=cart.map(i=>`${i.name} x${i.qty}<br>`).join('');
+  if(!cart.length){document.getElementById('total').innerText='Carrito vacío';document.getElementById('det').innerText='Envío CDMX $99'; return;}
+  let s=cart.reduce((a,b)=>a+b.price*b.qty,0);
+  let count=cart.reduce((a,b)=>a+b.qty,0);
+  document.getElementById('total').innerText=`Total: $${s+ENVIO} (${count} productos)`;
+  document.getElementById('det').innerText=`Subtotal $${s} + Envío $${ENVIO}`;
 }
+function getMsg(){
+  let s=cart.reduce((a,b)=>a+b.price*b.qty,0);
+  let l=cart.map(p=>`- ${p.name} x${p.qty} $${p.price * p.qty}`).join('%0A');
+  return {s,l,msg:`Hola quiero:%0A${l}%0ASubtotal $${s}%0AEnvío $${ENVIO}%0ATOTAL $${s+ENVIO}`}
+}
+function wa(){if(!cart.length)return alert('Agrega algo');let {msg}=getMsg();window.open('https://wa.me/525611281892?text='+msg,'_blank')}
+
 async function pagar(){
-  if(cart.length===0) return alert('Vacío');
-  document.getElementById('payBtn').innerText='CARGANDO...';
-  const r=await fetch('https://meatnlove-stripe.marinamagro.workers.dev',{
-    method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({items:cart})
-  });
-  const data=await r.json();
-  if(data.url) window.location.href=data.url;
-  else alert(data.error);
+  if(!cart.length)return alert('Agrega algo');
+  const btn=document.getElementById('btnPagar');
+  btn.innerText='CARGANDO...'; btn.disabled=true;
+  try{
+    let itemsParaStripe = [...cart, {name:'Envío CDMX', price:ENVIO, qty:1}];
+    const r = await fetch(WORKER_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({items: itemsParaStripe})
+    });
+    const data = await r.json();
+    if(data.url) window.location.href = data.url;
+    else alert('Error Stripe: '+data.error);
+  }catch(e){ alert('Error: '+e.message); }
+  btn.innerText='Pagar con Stripe'; btn.disabled=false;
 }
-</script>
-</body>
-</html>
+</script></body></html>
