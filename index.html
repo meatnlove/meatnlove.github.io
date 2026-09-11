@@ -5,14 +5,9 @@
 <div class="cart"><b id="total">Carrito vacío</b><small id="det">Envío CDMX $99</small><div class="cart-actions"><button class="btn-stripe" onclick="pagar()">Pagar con Stripe</button><button class="btn-wa" onclick="wa()">WhatsApp</button></div></div>
 <script>
 const STRIPE="https://buy.stripe.com/4gMcN63Paciw2Hm7fX0VO01"; const ENVIO=99;
-const prods=[
-["SIRLOIN 500g",333,"sirloin.jpg"],["TOCINO 500g",285,"tocino.jpg"],["ARRACHERA 500g",320,"arrachera.jpg"],["BISTEC 500g",320,"bistec.jpg"],["CECINA 500g",333,"cecina.jpg"],["CHORIZO 500g",229,"chorizo.jpg"],["COSTILLAS 500g",438,"costillas.jpg"],["FILETE 500g",385,"filete.jpg"],["HUEVO 30pzas",156,"huevo.jpg"],["LOMO 500g",250,"lomo.jpg"],["MILANESA 500g",325,"milanesa.jpg"],["MOLIDA 500g",240,"molida.jpg"],["MOLIDA DIEZMILLO 500g",320,"molidadiezmillo.jpg"],["PAVO TG 1kg",320,"pavoTG.jpg"],["PICAÑA 500g",307,"picana.jpg"],["RETAZO 500g",206,"retazo.jpg"]
-];
+const prods=[["SIRLOIN 500g",333,"sirloin.jpg"],["TOCINO 500g",285,"tocino.jpg"],["ARRACHERA 500g",320,"arrachera.jpg"],["BISTEC 500g",320,"bistec.jpg"],["CECINA 500g",333,"cecina.jpg"],["CHORIZO 500g",229,"chorizo.jpg"],["COSTILLAS 500g",438,"costillas.jpg"],["FILETE 500g",385,"filete.jpg"],["HUEVO 30pzas",156,"huevo.jpg"],["LOMO 500g",250,"lomo.jpg"],["MILANESA 500g",325,"milanesa.jpg"],["MOLIDA 500g",240,"molida.jpg"],["MOLIDA DIEZMILLO 500g",320,"molidadiezmillo.jpg"],["PAVO TG 1kg",320,"pavoTG.jpg"],["PICAÑA 500g",307,"picana.jpg"],["RETAZO 500g",206,"retazo.jpg"]];
 let cart=[]; const grid=document.getElementById('grid');
-prods.forEach((p,i)=>{
-  let img = p[2]==='pavoTG.jpg'? `<img src="img/${p[2]}" onerror="this.src='img/pavotg.jpg'">` : p[2]==='costillas.jpg'? `<img src="img/${p[2]}" onerror="this.src='img/costilla.jpg'">` : `<img src="img/${p[2]}">`;
-  grid.innerHTML+=`<div class="card">${img}<h3>${p[0]}</h3><b>$${p[1]}</b><br><button class="btn" onclick="add(${i})">Agregar</button></div>`;
-});
+prods.forEach((p,i)=>{let img=p[2]==='pavoTG.jpg'?`<img src="img/${p[2]}" onerror="this.src='img/pavotg.jpg'">`:p[2]==='costillas.jpg'?`<img src="img/${p[2]}" onerror="this.src='img/costilla.jpg'">`:`<img src="img/${p[2]}">`;grid.innerHTML+=`<div class="card">${img}<h3>${p[0]}</h3><b>$${p[1]}</b><br><button class="btn" onclick="add(${i})">Agregar</button></div>`;});
 function add(i){cart.push(prods[i]);let s=cart.reduce((a,b)=>a+b[1],0);document.getElementById('total').innerText=`Total: $${s+ENVIO} (${cart.length} productos)`;document.getElementById('det').innerText=`Subtotal $${s} + Envío $${ENVIO}`}
 function getMsg(){let s=cart.reduce((a,b)=>a+b[1],0);let l=cart.map(p=>`- ${p[0]} $${p[1]}`).join('%0A');return {s,l,msg:`Hola quiero:%0A${l}%0ASubtotal $${s}%0AEnvío $${ENVIO}%0ATOTAL $${s+ENVIO}`}}
 function wa(){if(!cart.length)return alert('Agrega algo');let {msg}=getMsg();window.open('https://wa.me/525611281892?text='+msg,'_blank')}
