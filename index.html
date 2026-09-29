@@ -1,20 +1,105 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>meat & love</title>
-<style>body{margin:0;font-family:Helvetica;background:#E8D6B7;color:#1E3A2F;padding-bottom:240px}header{text-align:center;padding:24px;background:#F5EBDA}header img{width:190px;height:190px;border-radius:50%;display:block;margin:0 auto 12px;object-fit:cover}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;max-width:1000px;margin:0 auto}.card{background:#fff;border-radius:16px;padding:10px}.card img{width:100%;height:260px;object-fit:cover;border-radius:12px;background:#eee;display:block}.btn{width:100%;background:#1E3A2F;color:#fff;border:0;padding:10px;border-radius:10px;font-weight:800;margin-top:6px}.cart{position:fixed;bottom:12px;left:12px;right:12px;background:#1E3A2F;color:#fff;padding:14px;border-radius:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow:auto}.cart-item{display:flex;justify-content:space-between;align-items:center;background:#2a4d3f;padding:6px 10px;border-radius:8px;margin-top:6px;font-size:14px}.cart-item button{background:#fff;color:#1E3A2F;border:0;border-radius:6px;padding:2px 8px;font-weight:900;margin-left:4px}.cart-actions{display:flex;gap:8px;margin-top:8px}.btn-mp{flex:1;background:#009ee3;color:#fff;border:0;padding:14px;border-radius:10px;font-weight:900}.btn-wa{flex:1;background:#fff;color:#1E3A2F;border:0;padding:14px;border-radius:10px;font-weight:900}</style></head><body>
-<header><img src="img/logo.png" loading="eager"><h2>meat & love ♡</h2><p>CDMX - Fresco del rastro</p></header>
-<div class="grid" id="grid"></div>
-<div class="cart"><b id="total">Carrito vacío</b><small id="det">Envío CDMX $99 - Puedes quitar productos</small><div id="lista"></div><div class="cart-actions"><button class="btn-mp" onclick="pagar()">Pedir / Pagar</button><button class="btn-wa" onclick="wa()">WhatsApp</button></div></div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meat N Love - Carnes Premium CDMX</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-stone-50 font-sans">
+<!-- BANNER VIRREYES -->
+<div class="bg-black text-white text-center py-2.5 px-4 text-[13px] font-bold tracking-wide">
+🥩 NUEVO: Recoge GRATIS en Virreyes - Morvan 196 B - Lunes 2pm a 8pm
+</div>
+
+<header class="bg-white border-b sticky top-0 z-10">
+<div class="max-w-4xl mx-auto p-4 flex justify-between items-center">
+<h1 class="text-2xl font-black">MEAT N LOVE</h1>
+<button id="cartBtn" class="bg-black text-white px-4 py-2 rounded-full text-sm">Carrito (<span id="cartCount">0</span>)</button>
+</div>
+</header>
+
+<main class="max-w-4xl mx-auto p-4 grid md:grid-cols-2 gap-6 mt-6">
+<div>
+<h2 class="text-xl font-bold mb-4">Cortes Premium</h2>
+<div id="products" class="grid gap-3"></div>
+</div>
+
+<div class="bg-white rounded-2xl border p-5 h-fit">
+<h3 class="font-bold text-lg">Tu Pedido</h3>
+<div id="cartItems" class="mt-4 text-sm text-gray-500">Carrito vacío</div>
+
+<div class="mt-6 border-t pt-4">
+<p class="font-bold text-sm mb-3">Tipo de Entrega</p>
+<label class="flex gap-3 p-3 border rounded-xl cursor-pointer mb-2 hover:bg-gray-50">
+<input type="radio" name="ship" value="180" checked onchange="calc()">
+<div class="text-sm"><b>Envío a domicilio CDMX - $180</b><br><span class="text-xs text-gray-600">Entrega en 24hrs</span></div>
+</label>
+<label class="flex gap-3 p-3 border-2 border-black bg-yellow-50 rounded-xl cursor-pointer">
+<input type="radio" name="ship" value="0" id="pickup" onchange="calc()">
+<div class="text-sm"><b>📍 Recoger en Morvan 196 B - GRATIS</b><br>
+<span class="text-xs">Lomas de Virreyes - Lunes 2pm a 8pm<br><b style="color:green">Te ahorras $180</b> - Te aviso por WA</span></div>
+</label>
+</div>
+
+<div class="mt-4 space-y-1 text-sm">
+<div class="flex justify-between"><span>Subtotal</span><span id="sub">$0</span></div>
+<div class="flex justify-between"><span>Envío</span><span id="shipCost">$180</span></div>
+<div class="flex justify-between font-black text-lg border-t pt-2"><span>Total</span><span id="total">$0</span></div>
+</div>
+
+<input id="custName" placeholder="Tu nombre" class="w-full mt-4 p-3 border rounded-xl text-sm">
+<input id="custPhone" placeholder="WhatsApp" class="w-full mt-2 p-3 border rounded-xl text-sm">
+
+<button onclick="orderWA()" class="w-full bg-black text-white py-4 rounded-xl font-bold mt-4">PEDIR POR WHATSAPP</button>
+<p id="pickupNote" class="hidden mt-3 text-xs bg-yellow-100 p-2 rounded-lg text-center">📍 Recogerás en: <b>Morvan 196 B, Lomas de Virreyes</b> el Lunes 2pm-8pm</p>
+</div>
+</main>
+
 <script>
-const ENVIO=99;
-const prods=[["SIRLOIN 500g",333,"sirloin.jpg"],["TOCINO 500g",285,"tocino.jpg"],["ARRACHERA 500g",320,"arrachera.jpg"],["BISTEC 500g",320,"bistec.jpg"],["CECINA 500g",333,"cecina.jpg"],["CHORIZO 500g",229,"chorizo.jpg"],["COSTILLAS 500g",438,"costillas.jpg"],["FILETE 500g",385,"filete.jpg"],["HUEVO 30pzas",156,"huevo.jpg"],["LOMO 500g",250,"lomo.jpg"],["MILANESA 500g",325,"milanesa.jpg"],["MOLIDA 500g",240,"molida.jpg"],["MOLIDA DIEZMILLO 500g",320,"molidadiezmillo.jpg"],["PAVO TG 1kg",320,"pavoTG.jpg"],["PICAÑA 500g",307,"picana.jpg"],["RETAZO 500g",206,"retazo.jpg"]];
-let cart=[]; const grid=document.getElementById('grid');
+const prods=[
+{name:"Ribeye USDA Prime 500g",price:450},
+{name:"Arrachera Marinada 1kg",price:380},
+{name:"Picaña Angus 1kg",price:520},
+{name:"Hamburguesas Wagyu x4",price:320},
+];
+let cart=[];
+const prodDiv=document.getElementById('products');
 prods.forEach((p,i)=>{
-let imgTag = p[2]==='pavoTG.jpg'? `<img src="img/${p[2]}" loading="lazy" onerror="this.src='img/pavotg.jpg'">` : p[2]==='costillas.jpg'? `<img src="img/${p[2]}" loading="lazy" onerror="this.src='img/costilla.jpg'">` : `<img src="img/${p[2]}" loading="lazy">`;
-grid.innerHTML+=`<div class="card">${imgTag}<h3>${p[0]}</h3><b>$${p[1]}</b><br><button class="btn" onclick="add(${i})">Agregar</button></div>`;
+prodDiv.innerHTML+=`<div class="bg-white border rounded-xl p-4 flex justify-between items-center"><div><b class="text-sm">${p.name}</b><br><span class="text-sm">$${p.price}</span></div><button onclick="add(${i})" class="bg-black text-white px-3 py-1.5 rounded-full text-xs">Agregar</button></div>`
 });
-function add(i){let f=cart.find(c=>c.name===prods[i][0]);if(f)f.qty++;else cart.push({name:prods[i][0],price:prods[i][1],qty:1});render();}
-function render(){let lista=document.getElementById('lista');lista.innerHTML='';if(!cart.length){document.getElementById('total').innerText='Carrito vacío';document.getElementById('det').innerText='Envío CDMX $99';return;}let s=cart.reduce((a,b)=>a+b.price*b.qty,0);let c=cart.reduce((a,b)=>a+b.qty,0);document.getElementById('total').innerText=`Total: $${s+ENVIO} (${c} productos)`;document.getElementById('det').innerText=`Subtotal $${s} + Envío $${ENVIO}`;cart.forEach((it,idx)=>{lista.innerHTML+=`<div class="cart-item"><span>${it.name} x${it.qty}</span><span><button onclick="cambia(${idx},-1)">-</button><button onclick="cambia(${idx},1)">+</button><button onclick="quita(${idx})"> X </button></span></div>`});}
-function cambia(i,d){cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);render();}
-function quita(i){cart.splice(i,1);render();}
-function wa(){if(!cart.length)return alert('Agrega algo');let s=cart.reduce((a,b)=>a+b.price*b.qty,0);let l=cart.map(p=>`- ${p.name} x${p.qty}`).join('%0A');window.location.href=`https://wa.me/525611281892?text=Hola quiero:%0A${l}%0ATOTAL $${s+ENVIO}`;}
-function pagar(){wa();}
-</script></body></html>
+function add(i){
+let f=cart.find(c=>c.i==i);
+if(f)f.q++; else cart.push({i,q:1});
+render();
+}
+function render(){
+let cDiv=document.getElementById('cartItems');
+if(cart.length==0){cDiv.innerHTML='Carrito vacío';}
+else{
+cDiv.innerHTML=cart.map(c=>`${prods[c.i].name} x${c.q} - $${prods[c.i].price*c.q} <button onclick="cart=cart.filter(x=>x.i!=${c.i});render()" class="text-red-500 ml-2">x</button>`).join('<br>');
+}
+document.getElementById('cartCount').innerText=cart.reduce((a,b)=>a+b.q,0);
+calc();
+}
+function calc(){
+let sub=cart.reduce((a,b)=>a+b.q*prods[b.i].price,0);
+let ship=parseInt(document.querySelector('input[name="ship"]:checked').value);
+document.getElementById('sub').innerText='$'+sub;
+document.getElementById('shipCost').innerText=ship==0?'GRATIS':'$'+ship;
+document.getElementById('total').innerText='$'+(sub+ship);
+document.getElementById('pickupNote').classList.toggle('hidden',ship!=0);
+}
+function orderWA(){
+let sub=cart.reduce((a,b)=>a+b.q*prods[b.i].price,0);
+let ship=parseInt(document.querySelector('input[name="ship"]:checked').value);
+let total=sub+ship;
+let name=document.getElementById('custName').value;
+let isPickup=ship==0;
+let msg=`Hola Meat N Love! Quiero pedir:%0A${cart.map(c=>`- ${prods[c.i].name} x${c.q}`).join('%0A')}%0A%0ASubtotal: $${sub}%0AEnvio: ${isPickup?'GRATIS (Recojo en Morvan 196 B)':'$'+ship}%0ATotal: $${total}%0A%0ANombre: ${name}%0A${isPickup?'📍 RECOGER EN: Morvan 196 B, Lomas Virreyes - Lunes 2pm-8pm':''}`;
+window.open('https://wa.me/52555611281892?text='+msg,'_blank');
+}
+render();
+</script>
+</body>
+</html>
