@@ -52,7 +52,7 @@ h1{margin:0;font-size:26px}
 <script src="productos.js"></script>
 <script>
 const ENVIO=99; const WA_NUMBER="525611281892";
-const VERCEL_CHECKOUT = "https://meatnlove-aom8gqz4k-love-meats-projects.vercel.app/api/checkout";
+const VERCEL_CHECKOUT = "https://meatnlove.vercel.app/api/checkout";
 let entrega='envio'; let cart=[]; try{let s=localStorage.getItem('meatnlove-cart'); if(s) cart=JSON.parse(s);}catch(e){}
 function saveCart(){localStorage.setItem('meatnlove-cart', JSON.stringify(cart));}
 function setE(t){ entrega=t; document.getElementById('lab-envio').classList.toggle('active',t==='envio'); document.getElementById('lab-pickup').classList.toggle('active',t==='pickup'); render(); }
