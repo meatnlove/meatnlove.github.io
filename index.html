@@ -30,8 +30,8 @@ h1{margin:0;font-size:26px}
 </head>
 <body>
 <header>
-<img src="img/logo.png" onerror="this.onerror=null;this.src='img/img/logo.png'" alt="logo">
-<h1>meat & love ♡</h1><p style="margin:4px 0 0">CDMX - Orgánico y agroecológico</p>
+<img src="img/logo.png" alt="logo">
+<h1>meat & love ♡</h1><p>CDMX - Orgánico</p>
 </header>
 <div class="section-title">🐔 Pollo y Huevo</div><div class="grid" id="grid-pollo"></div>
 <div class="section-title">🦃 Pavo</div><div class="grid" id="grid-pavo"></div>
@@ -42,46 +42,35 @@ h1{margin:0;font-size:26px}
 <small id="det">Elige entrega</small>
 <div class="ship-opt">
 <label id="lab-envio" class="active"><input type="radio" name="e" checked onchange="setE('envio')"> 🚚 Envío $99</label>
-<label id="lab-pickup"><input type="radio" name="e" onchange="setE('pickup')"> 📍 Recoger GRATIS<br><small style="font-size:10px">Morvan 196 B Virreyes<br>Lun 2pm-8pm</small></label>
+<label id="lab-pickup"><input type="radio" name="e" onchange="setE('pickup')"> 📍 Recoger GRATIS<br><small>Morvan 196 B</small></label>
 </div>
 <div id="lista"></div>
 <div class="cart-actions"><button id="btn-pagar" class="btn-mp" onclick="pagar()">Pagar con tarjeta 💳</button><button class="btn-wa" onclick="wa()">WhatsApp</button></div>
 </div>
 <script src="productos.js"></script>
 <script>
-const ENVIO=99; const WA_NUMBER="525611281892";
-const VERCEL_CHECKOUT = "/api/checkout";
+const ENVIO=99; const WA_NUMBER="525611281892"; const VERCEL_CHECKOUT="/api/checkout";
 let entrega='envio'; let cart=[]; try{let s=localStorage.getItem('meatnlove-cart'); if(s) cart=JSON.parse(s);}catch(e){}
 function saveCart(){localStorage.setItem('meatnlove-cart', JSON.stringify(cart));}
 function setE(t){ entrega=t; document.getElementById('lab-envio').classList.toggle('active',t==='envio'); document.getElementById('lab-pickup').classList.toggle('active',t==='pickup'); render(); }
 const gp=document.getElementById('grid-pollo'), gv=document.getElementById('grid-pavo'), gr=document.getElementById('grid-res'), gm=document.getElementById('grid-mascotas');
-function imgTag(f){return `<img src="img/${f}" loading="lazy" onerror="this.onerror=null;this.src='img/img/${encodeURI(f)}'">`;}
+function imgTag(f){return `<img src="img/${f}" loading="lazy">`;}
 polloProds.forEach((p)=>{gp.innerHTML+=`<div class="card">${imgTag(p[2])}<h3>${p[0]}</h3><b>$${p[1]}</b><button class="btn" onclick="addP('${p[0]}',${p[1]})">Agregar</button></div>`});
 pavoProds.forEach((p)=>{gv.innerHTML+=`<div class="card">${imgTag(p[2])}<h3>${p[0]}</h3><b>$${p[1]}</b><button class="btn" onclick="addP('${p[0]}',${p[1]})">Agregar</button></div>`});
 resProds.forEach((p)=>{gr.innerHTML+=`<div class="card">${imgTag(p[2])}<h3>${p[0]}</h3><b>$${p[1]}</b><button class="btn" onclick="addP('${p[0]}',${p[1]})">Agregar</button></div>`});
 mascotaProds.forEach((p)=>{gm.innerHTML+=`<div class="card">${imgTag(p[2])}<h3>${p[0]}</h3><b>$${p[1]}</b><button class="btn" onclick="addP('${p[0]}',${p[1]})">Agregar</button></div>`});
 function addP(name,price){let f=cart.find(c=>c.name===name); if(f) f.qty++; else cart.push({name,price,qty:1}); render();}
-function render(){saveCart(); let lista=document.getElementById('lista'); lista.innerHTML=''; if(!cart.length){document.getElementById('total').innerText='Carrito vacío'; document.getElementById('det').innerText='Elige envío o recoger gratis'; document.getElementById('btn-pagar').innerText='Pagar con tarjeta 💳'; return;} let s=cart.reduce((a,b)=>a+b.price*b.qty,0); let c=cart.reduce((a,b)=>a+b.qty,0); let envioActual = entrega==='pickup'?0:ENVIO; let total=s+envioActual; document.getElementById('total').innerText=`Total: $${total} (${c} prod)`; document.getElementById('det').innerText = entrega==='pickup'? `Subtotal $${s} + Recoger GRATIS en Morvan 196 B` : `Subtotal $${s} + Envío $${ENVIO}`; cart.forEach((it,idx)=>{lista.innerHTML+=`<div class="cart-item"><span>${it.name} x${it.qty}</span><span><button onclick="cambia(${idx},-1)">-</button><button onclick="cambia(${idx},1)">+</button><button onclick="quita(${idx})">X</button></span></div>`}); document.getElementById('btn-pagar').innerText = entrega==='pickup' ? 'Pagar Recoger Morvan 💳' : 'Pagar con Envío 💳';}
+function render(){saveCart(); let lista=document.getElementById('lista'); lista.innerHTML=''; if(!cart.length){document.getElementById('total').innerText='Carrito vacío'; return;} let s=cart.reduce((a,b)=>a+b.price_b.qty,0); let c=cart.reduce((a,b)=>a+b.qty,0); let envioActual = entrega==='pickup'?0:ENVIO; let total=s+envioActual; document.getElementById('total').innerText=`Total: $${total} (${c} prod)`; document.getElementById('det').innerText = entrega==='pickup'? `Subtotal $${s} + Recoger GRATIS` : `Subtotal $${s} + Envío $${ENVIO}`; cart.forEach((it,idx)=>{lista.innerHTML+=`<div class="cart-item"><span>${it.name} x${it.qty}</span><span><button onclick="cambia(${idx},-1)">-</button><button onclick="cambia(${idx},1)">+</button><button onclick="quita(${idx})">X</button></span></div>`});}
 function cambia(i,d){cart[i].qty+=d; if(cart[i].qty<=0) cart.splice(i,1); render();}
 function quita(i){cart.splice(i,1); render();}
-function wa(){if(!cart.length) return alert('Agrega algo'); let s=cart.reduce((a,b)=>a+b.price*b.qty,0); let envioActual=entrega==='pickup'?0:ENVIO; let total=s+envioActual; let l=cart.map(p=>`- ${p.name} x${p.qty} $${p.price*p.qty}`).join('%0A'); let tipo=entrega==='pickup'? 'RECOGER GRATIS en Morvan 196 B, Lomas Virreyes (Lunes 2pm-8pm)' : `Envío CDMX $${ENVIO}`; let msg=`Hola Meat&Love! Quiero pedir:%0A${l}%0A%0ASubtotal: $${s}%0A${tipo}%0ATOTAL: $${total}`; window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`,'_blank');}
+function wa(){if(!cart.length) return alert('Agrega algo'); let s=cart.reduce((a,b)=>a+b.price_b.qty,0); let envioActual=entrega==='pickup'?0:ENVIO; let total=s+envioActual; let l=cart.map(p=>`- ${p.name} x${p.qty}`).join('%0A'); window.open(`https://wa.me/${WA_NUMBER}?text=${l} Total $${total}`,'_blank');}
 async function pagar(){
   if(!cart.length) return alert('Agrega algo');
-  let btn=document.getElementById('btn-pagar');
-  btn.innerText='Conectando...'; btn.disabled=true;
+  let btn=document.getElementById('btn-pagar'); btn.innerText='Conectando...'; btn.disabled=true;
   try{
-    let res=await fetch(VERCEL_CHECKOUT,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({cart, pickup: entrega==='pickup'})
-    });
-    let data=await res.json();
-    if(data.url){ window.location.href=data.url; return; }
-    throw new Error(data.error || 'Sin URL');
-  }catch(e){
-    alert('Error Vercel: '+e.message);
-    btn.innerText='Pagar con tarjeta 💳'; btn.disabled=false;
-  }
+    let res=await fetch(VERCEL_CHECKOUT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cart, deliveryOption: entrega})});
+    let data=await res.json(); if(data.url){ window.location.href=data.url; return; } throw new Error(data.error);
+  }catch(e){ alert('Error: '+e.message); btn.disabled=false; btn.innerText='Pagar con tarjeta 💳'; }
 }
 render();
 </script>
