@@ -1,7 +1,5 @@
 // SOLO EDITA ESTE ARCHIVO CADA SEMANA
-// Formato: ["NOMBRE", precio, "foto.jpg"],
 
-// POLLO - Pollo orgánico y congelado de Granja Campoalegre. Entregas de lunes a viernes.
 const polloProds=[
 ["HUEVO PZA",7,"huevo.jpg"],
 ["PECHUGA DESHUESADA 550-600g",252,"pechugadeshuesada.jpg"],
@@ -9,7 +7,7 @@ const polloProds=[
 ["FAJITAS POLLO 500g",200,"fajitaspollo.jpg"],
 ["PIERNA C/MUSLO 550g",137,"piernaconmuslo.jpg"],
 ["PIERNA 500g",105,"piernapollo.jpg"],
-["MILANESA POLLO 500g",263,"milanesa de pollo.jpg"],
+["MILANESA POLLO 500g",263,"milanesadepollo.jpg"],
 ["MOLIDA POLLO 500g",150,"molidapollo.jpg"],
 ["HAMB POLLO 4pzas",252,"hamburguesapollo.jpg"],
 ["KIT CONSOME",79,"kitcaldopollo.jpg"]
@@ -20,9 +18,6 @@ const pavoProds=[
 ["MOLIDA PAVO 500g",247,"molidapavo.jpg"],
 ["PAVO TG (APARTADO) - $350 POR KILO",350,"pavoTG.jpg"]
 ];
-
-// CARNE FRESCA - Rancho Las Iguanas
-// Carne de Rancho las Iguanas, un rancho de familias indígenas. Las vacas pastan libres por las montañas de Tepoztlán los primeros 2 años de vida, después viven libres en el rancho, donde toman agua de un manantial y complementan su alimentación con granos sin pesticidas. Los pedidos se cierran los viernes y las entregas son los lunes. Pregunta por cortes especiales. Todo se puede pedir al gusto.
 
 const resProds=[
 ["ARRACHERA 500g",336,"arrachera.jpg"],
@@ -46,8 +41,7 @@ const mascotaProds=[
 ["MEZCLA DE POLLO PARA MASCOTAS 500g",75,"pollomascotas.jpg"]
 ];
 
-// CONGELADOS ORGANICOS - Campo Alegre Yautepec
-// Res y cerdo orgánicos en stock de la granja Campo Alegre en Yautepec. Entregas de lunes a viernes.
+// JUNTO RES + CERDO CONGELADO EN UNA SOLA CATEGORIA
 const resDomesticosProds=[
 ["ARRACHERA MARINADA 500g PREMIUM",389,"arracheramarinada.jpg"],
 ["BISTECK 500g PREMIUM 5 PZS",247,"bistecrescongelado.jpg"],
@@ -66,3 +60,6 @@ const cerdoDomesticosProds=[
 ["TOCINO AHUMADO 350g PREMIUM",420,"tocinoahumado350.jpg"],
 ["COSTILLA P/ ASAR 1kg PREMIUM",399,"costillaasar1kg.jpg"]
 ];
+
+const resCongeladaProds = [...resDomesticosProds, ...cerdoDomesticosProds];
+const alacenaProds = [];
