@@ -4,109 +4,143 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Checkout - meat & love</title>
 <style>
-body{margin:0;font-family:Helvetica,Arial,sans-serif;background:#E8D6B7;color:#1E3A2F;padding:20px;line-height:1.5}
-.box{max-width:600px;margin:0 auto;background:#fff;border-radius:20px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.1)}
-h1{margin:0 0 12px;font-size:22px}
-.item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;font-size:14px}
-.total{font-weight:900;font-size:18px;margin:16px 0}
-.opt{display:flex;gap:8px;margin:12px 0}
-.opt button{flex:1;padding:12px;border-radius:10px;border:2px solid #1E3A2F;font-weight:900;cursor:pointer}
-.opt button.active{background:#1E3A2F;color:#fff}
-input,textarea,select{width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:10px;font-size:14px;box-sizing:border-box}
-.btn{width:100%;padding:14px;border:0;border-radius:12px;font-weight:900;font-size:16px;cursor:pointer;margin-top:8px}
+body{margin:0;font-family:Helvetica,Arial,sans-serif;background:#E8D6B7;color:#1E3A2F}
+.box{max-width:520px;margin:20px auto;background:#fff;border-radius:24px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+h1{font-size:22px;margin:0 0 16px;font-weight:900}
+.item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0e6d3;font-size:14px}
+.total{font-weight:900;font-size:18px;margin:16px 0;padding:12px;background:#F5EBDA;border-radius:12px;text-align:center}
+input,textarea{width:100%;padding:14px;margin:8px 0;border:1.5px solid #E8D6B7;border-radius:12px;font-size:15px;box-sizing:border-box;outline:none;font-family:inherit}
+input:focus,textarea:focus{border-color:#1E3A2F}
+.btn{width:100%;padding:16px;border:0;border-radius:14px;font-weight:900;font-size:16px;cursor:pointer;margin-top:10px}
 .btn-pay{background:#1E3A2F;color:#fff}
-.btn-wa{background:#25D366;color:#fff}
-.btn-back{background:#eee;color:#1E3A2F}
-small{color:#666}
-#msg{color:#c00;font-weight:700;margin:8px 0}
+.btn-back{background:#F5EBDA;color:#1E3A2F}
+.habitual{background:#F5EBDA;border-radius:12px;padding:14px;display:flex;align-items:center;gap:10px;margin:12px 0;cursor:pointer;font-size:14px;font-weight:700;user-select:none}
+.habitual input{width:auto;margin:0;accent-color:#1E3A2F}
+small{color:#8a7a60;font-size:12px;display:block;text-align:center;margin-top:12px;line-height:1.4}
+#msg{color:#c00;font-weight:700;margin:8px 0;font-size:13px;min-height:16px}
+.opt{display:flex;gap:8px;margin:12px 0}
+.opt button{flex:1;padding:12px;border-radius:12px;border:2px solid #1E3A2F;font-weight:900;cursor:pointer;background:#fff;color:#1E3A2F}
+.opt button.active{background:#1E3A2F;color:#fff}
+.pay-icon{font-size:18px}
 </style>
 </head>
 <body>
 <div class="box">
-<h1>Tu pedido ♡</h1>
+<h1>Confirma tu pedido ♡</h1>
 <div id="items"></div>
 <div class="total" id="total"></div>
 
 <div class="opt">
-<button id="b-envio" class="active" onclick="setDel('envio')">🚚 Envío $99</button>
-<button id="b-pickup" onclick="setDel('pickup')">🏠 Recoger Gratis</button>
+<button id="b-envio" class="active" onclick="setDel('envio')">🚚 Envío</button>
+<button id="b-pickup" onclick="setDel('pickup')">🏠 Recoger</button>
 </div>
-<div id="envio-info" style="font-size:13px;background:#F5EBDA;padding:10px;border-radius:10px">Morvan 196 B - Entrega CDMX. Gratis en pedidos $1500+</div>
 
-<h3 style="margin-top:16px">Datos</h3>
+<label class="habitual" for="habitualCheck">
+<input type="checkbox" id="habitualCheck" onchange="toggleHab()"> Ya tienen mis datos, soy cliente habitual ♡
+</label>
+
+<div id="form-fields">
 <input id="nombre" placeholder="Nombre completo *">
-<input id="telefono" placeholder="WhatsApp *">
-<input id="email" placeholder="Email (para ticket)">
-<div id="dir-fields">
-<input id="calle" placeholder="Calle y número *">
-<input id="colonia" placeholder="Colonia *">
-<input id="alcaldia" placeholder="Alcaldía *">
-<input id="cp" placeholder="CP">
-<input id="ref" placeholder="Referencia / entre calles">
+<textarea id="direccion" rows="3" placeholder="Dirección completa (calle, número, colonia, alcaldía) *"></textarea>
 </div>
-<textarea id="nota" placeholder="Notas"></textarea>
+
+<textarea id="nota" rows="2" placeholder="Notas para el pedido (opcional)"></textarea>
 <div id="msg"></div>
 
-<button class="btn btn-pay" id="payBtn" onclick="pagar()">Pagar con tarjeta</button>
-<button class="btn btn-wa" onclick="enviarWA()">Solo WhatsApp</button>
+<button class="btn btn-pay" id="payBtn" onclick="pagar()">
+<span style="display:flex;align-items:center;justify-content:center;gap:8px">
+Pagar con tarjeta /  Apple Pay
+</span>
+</button>
 <button class="btn btn-back" onclick="location.href='index.html'">← Seguir comprando</button>
+<small>Al pagar te llega confirmación automática. Apple Pay y Google Pay aparecen dentro del checkout seguro de Stripe.</small>
 </div>
 
 <script>
-let cart=[]; try{ cart=JSON.parse(localStorage.getItem('meatnlove-cart')||'[]'); }catch(e){ cart=[]; }
+let cart=[]; try{cart=JSON.parse(localStorage.getItem('meatnlove-cart')||'[]');}catch(e){}
 let deliveryOption='envio';
+let saved=null; try{saved=JSON.parse(localStorage.getItem('meatnlove-customer')||'null');}catch(e){}
+
 function setDel(opt){
   deliveryOption=opt;
   document.getElementById('b-envio').className=opt=='envio'?'active':'';
   document.getElementById('b-pickup').className=opt=='pickup'?'active':'';
-  document.getElementById('dir-fields').style.display=opt=='pickup'?'none':'block';
-  document.getElementById('envio-info').innerText=opt=='pickup'?'Recoger en Morvan 196 B - GRATIS':'Entrega CDMX. Gratis en pedidos de $1500 o más';
   render();
 }
+
+function toggleHab(){
+  let isHab=document.getElementById('habitualCheck').checked;
+  document.getElementById('form-fields').style.display=isHab?'none':'block';
+  if(isHab && saved){
+    document.getElementById('nombre').value=saved.nombre||'';
+    document.getElementById('direccion').value=saved.direccion||'';
+  }
+}
+
 function render(){
-  let box=document.getElementById('items');
-  let totalEl=document.getElementById('total');
+  let box=document.getElementById('items'); let totalEl=document.getElementById('total');
   if(!cart.length){ box.innerHTML='<p>Carrito vacío</p>'; totalEl.innerText=''; return; }
   let sub=cart.reduce((a,b)=>a+b.price*b.qty,0);
-  let env=0;
-  if(deliveryOption!='pickup'){ env = sub>=1500?0:99; }
+  let env=deliveryOption!='pickup'?(sub>=1500?0:99):0;
   box.innerHTML=cart.map(p=>`<div class="item"><span>${p.name} x${p.qty}</span><span>$${p.price*p.qty}</span></div>`).join('');
-  box.innerHTML+=`<div class="item"><span>Subtotal</span><span>$${sub}</span></div><div class="item"><span>${deliveryOption=='pickup'?'Recoger':'Envío'}</span><span>${env==0?'GRATIS':'$'+env}</span></div>`;
-  totalEl.innerText=`Total: $${sub+env}`;
-  window._calc={subtotal:sub, total:sub+env, envio:env};
+  totalEl.innerText=`Total: $${sub+env} ${env==0&&deliveryOption!='pickup'&&sub>0?'• ENVÍO GRATIS':''}`;
+  window._calc={subtotal:sub,total:sub+env,envio:env};
 }
 render();
 
+// precarga si es clienta habitual
+if(saved){
+  document.getElementById('nombre').value=saved.nombre||'';
+  document.getElementById('direccion').value=saved.direccion||'';
+}
+
 async function pagar(){
   if(!cart.length) return;
+  let isHab=document.getElementById('habitualCheck').checked;
   let nombre=document.getElementById('nombre').value.trim();
-  let telefono=document.getElementById('telefono').value.trim();
-  if(!nombre||!telefono){ document.getElementById('msg').innerText='Pon nombre y WhatsApp'; return; }
-  document.getElementById('payBtn').innerText='Creando link de pago...';
+  let direccion=document.getElementById('direccion').value.trim();
+  
+  if(isHab){
+    if(!nombre) nombre=saved?.nombre||'Cliente habitual';
+    if(!direccion) direccion=saved?.direccion||'Cliente habitual - ya tienen mis datos';
+  }
+  
+  if(!nombre||!direccion){
+    document.getElementById('msg').innerText='Pon nombre y dirección, o marca "Ya tienen mis datos"';
+    return;
+  }
+  
+  localStorage.setItem('meatnlove-customer', JSON.stringify({nombre,direccion}));
+  localStorage.setItem('meatnlove-lastcalc', JSON.stringify(window._calc));
+  
+  document.getElementById('payBtn').innerHTML='Redirigiendo a pago seguro...';
   document.getElementById('payBtn').disabled=true;
-  let customer={
-    nombre, telefono,
-    email:document.getElementById('email').value.trim(),
-    calle:document.getElementById('calle').value.trim(),
-    colonia:document.getElementById('colonia').value.trim(),
-    alcaldia:document.getElementById('alcaldia').value.trim(),
-    cp:document.getElementById('cp').value.trim(),
-    ref:document.getElementById('ref').value.trim()
-  };
-  let address=`${customer.calle}, ${customer.colonia}, ${customer.alcaldia} ${customer.cp}`.substring(0,400);
-  let whatsappMessage=cart.map(p=>`• ${p.name} x${p.qty}`).join('\\n');
+  document.getElementById('msg').innerText='';
+
+  let customer={nombre, calle:direccion, colonia:'', alcaldia:'', cp:'', ref: document.getElementById('nota').value, telefono:'cliente habitual', email:''};
+  
   try{
-    let r=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cart, deliveryOption, customer, address, subtotal:window._calc.subtotal, total:window._calc.total, whatsappMessage})});
+    let r=await fetch('/api/checkout',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        cart, deliveryOption, customer, address:direccion,
+        subtotal:window._calc.subtotal, total:window._calc.total,
+        whatsappMessage:isHab?'CLIENTE HABITUAL - YA TIENEN MIS DATOS':''
+      })
+    });
     let j=await r.json();
-    if(j.url){ location.href=j.url; } else { document.getElementById('msg').innerText=j.error||'Error'; document.getElementById('payBtn').innerText='Pagar con tarjeta'; document.getElementById('payBtn').disabled=false; }
-  }catch(e){ document.getElementById('msg').innerText=e.message; document.getElementById('payBtn').innerText='Pagar con tarjeta'; document.getElementById('payBtn').disabled=false; }
-}
-function enviarWA(){
-  if(!cart.length) return;
-  let sub=window._calc.subtotal; let env=window._calc.envio;
-  let list=cart.map(p=>`• ${p.name} x${p.qty} - $${p.price*p.qty}`).join('\n');
-  let msg=`Hola Meat & Love! ♡\\nPEDIDO:\\n${list}\\nSubtotal $${sub} Envio ${env==0?'GRATIS':'$'+env} Total $${sub+env}\\nNombre: ${document.getElementById('nombre').value}`;
-  window.open(`https://wa.me/525611281892?text=${encodeURIComponent(msg)}`,'_blank');
+    if(j.url) location.href=j.url;
+    else {
+      document.getElementById('msg').innerText=j.error||'Error con Stripe, verifica tu STRIPE_SECRET_KEY en Vercel';
+      document.getElementById('payBtn').innerHTML='<span style="display:flex;align-items:center;justify-content:center;gap:8px">Pagar con tarjeta /  Apple Pay</span>';
+      document.getElementById('payBtn').disabled=false;
+    }
+  }catch(e){
+    document.getElementById('msg').innerText=e.message;
+    document.getElementById('payBtn').innerHTML='<span style="display:flex;align-items:center;justify-content:center;gap:8px">Pagar con tarjeta /  Apple Pay</span>';
+    document.getElementById('payBtn').disabled=false;
+  }
 }
 </script>
 </body>
