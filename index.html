@@ -131,9 +131,22 @@ Un producto de origen cercano que reconoce el trabajo cotidiano de las familias 
 <!-- PAVO -->
 <div class="section" id="sec-pavo">
 <div class="section-head" onclick="toggle('sec-pavo')">🦃 PAVO <span class="arrow">▼</span></div>
-<div class="grid" id="grid-pavo" style="padding-top:12px"></div>
+<div class="tabs">
+<button class="tab-btn active" onclick="switchTab(this,'pavo-prod')">Productos</button>
+<button class="tab-btn" onclick="switchTab(this,'pavo-info')">Info</button>
 </div>
-
+<div id="pavo-prod" class="tab-panel active" style="padding:0">
+<div class="section-desc"><span class="tag">PAVO DE CRIANZA FAMILIAR · TLAYACAPAN, MORELOS</span><br>Disponibilidad por temporada.</div>
+<div class="grid" id="grid-pavo"></div>
+</div>
+<div id="pavo-info" class="tab-panel"><div class="info-box">
+<b>Pavo de crianza familiar · Tlayacapan, Morelos</b><br><br>
+Nuestro pavo proviene de una crianza familiar en Tlayacapan, Morelos.<br>
+Una producción a pequeña escala que valora el cuidado diario y el tiempo de crianza.<br><br>
+Disponibilidad limitada por temporada, ideal para ocasiones especiales.
+</div></div>
+</div>
+  
 <!-- MASCOTAS -->
 <div class="section" id="sec-mascotas">
 <div class="section-head" onclick="toggle('sec-mascotas')">🐾 MASCOTAS <span class="arrow">▼</span></div>
