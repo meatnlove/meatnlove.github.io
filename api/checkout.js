@@ -92,7 +92,7 @@ Ref: ${customer.ref || ''}
       payment_intent_data: {
         description: `${envioLabel} | ${customerInfo}`.substring(0,1000)
       },
-      success_url: `${origin}/success.html?delivery=${deliveryOption}&session_id={CHECKOUT_SESSION_ID}`,
+      succes_url: `${origin}/succes.html?delivery=${deliveryOption}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/`,
     });
 
