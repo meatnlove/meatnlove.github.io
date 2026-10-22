@@ -4,20 +4,25 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>meat & love</title>
 <style>
-body{margin:0;font-family:Helvetica,Arial,sans-serif;background:#E8D6B7;color:#1E3A2F;padding-bottom:120px;line-height:1.5}
+body{margin:0;font-family:Helvetica,Arial,sans-serif;background:#E8D6B7;color:#1E3A2F;padding-bottom:130px;line-height:1.5}
 .banner-envio{background:#1E3A2F;color:#fff;text-align:center;padding:10px 12px;font-size:13px;font-weight:900;position:sticky;top:0;z-index:10000}
 header{text-align:center;padding:24px 20px;background:#F5EBDA}
 header img{width:190px;height:190px;border-radius:50%;display:block;margin:0 auto 12px;object-fit:cover;background:#fff;border:3px solid #fff}
 h1{margin:0;font-size:28px}
-.manifesto{max-width:700px;margin:16px auto 0;background:#fff;padding:22px;border-radius:20px;box-shadow:0 2px 12px rgba(0,0,0,.06);text-align:left}
+.manifesto{max-width:720px;margin:16px auto 0;background:#fff;padding:18px;border-radius:20px;box-shadow:0 2px 12px rgba(0,0,0,.06);text-align:left}
 .section{max-width:1000px;margin:12px auto 0;background:#fff;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
-.section-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer;background:#fff;font-weight:900;text-transform:uppercase;font-size:14px}
+.section-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer;background:#fff;font-weight:900;text-transform:uppercase;font-size:13px;letter-spacing:.3px}
 .section-head span.arrow{transition:transform .2s}
 .section.open .section-head span.arrow{transform:rotate(180deg)}
-.section-desc{padding:0 16px 12px;font-size:12.5px;color:#2a4d3f;line-height:1.4}
+.section-desc{padding:0 16px 8px;font-size:12.5px;color:#2a4d3f;line-height:1.4}
 .section-desc .tag{display:inline-block;background:#1E3A2F;color:#fff;font-size:10px;padding:3px 8px;border-radius:20px;font-weight:800;margin-bottom:6px}
-.grid{display:none;grid-template-columns:1fr 1fr;gap:12px;padding:0 12px 12px;max-width:1000px;margin:0 auto}
-.section.open .grid{display:grid}
+.tabs{display:flex;gap:6px;padding:8px 16px 0;flex-wrap:wrap}
+.tab-btn{border:1.5px solid #E8D6B7;background:#F5EBDA;color:#1E3A2F;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:800;cursor:pointer}
+.tab-btn.active{background:#1E3A2F;color:#fff;border-color:#1E3A2F}
+.tab-panel{display:none;padding:12px 16px 16px;font-size:13px;line-height:1.6}
+.tab-panel.active{display:block}
+.info-box{background:#F5EBDA;border-radius:12px;padding:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;max-width:1000px;margin:0 auto}
 @media(min-width:700px){.grid{grid-template-columns:1fr 1fr 1fr 1fr}}
 .card{background:#F5EBDA;border-radius:16px;padding:10px;display:flex;flex-direction:column}
 .card img{width:100%;height:150px;object-fit:cover;border-radius:12px;background:#eee}
@@ -36,40 +41,129 @@ h1{margin:0;font-size:28px}
 <header>
 <img src="img/logo.png" onerror="this.src='img/img/logo.png'" alt="logo">
 <h1>meat & love ♡</h1>
-<p> - productos familiares y agroecológicos - </p>
+<p>- productos familiares y agroecológicos -</p>
 <div class="manifesto">
+<div class="tabs" style="padding-left:0">
+<button class="tab-btn active" onclick="switchTab(this,'m1')">Historia</button>
+<button class="tab-btn" onclick="switchTab(this,'m2')">Envíos</button>
+<button class="tab-btn" onclick="switchTab(this,'m3')">Conservación</button>
+</div>
+<div id="m1" class="tab-panel active">
 <p style="font-weight:900;margin:0 0 6px">Comer bien empieza en la tierra.</p>
-<p style="margin:0;font-size:14px">Productos de familias del Corredor Biológico Chichinautzin, con cuidado por la tierra, los animales y las personas.</p>
+<p style="margin:0">Productos de familias del Corredor Biológico Chichinautzin, con cuidado por la tierra, los animales y las personas.</p>
+</div>
+<div id="m2" class="tab-panel"><b>🚚 Envío $99</b> Lunes 8am-3pm CDMX<br><b>Gratis en $1500+</b><br><b>📍 Recoger gratis:</b> Morvan 196 B, Virreyes, Lunes 2pm-8pm</div>
+<div id="m3" class="tab-panel">Carne fresca dura 3 días en refri, congelada 3 meses. Descongela en refri 24h antes.</div>
 </div>
 </header>
 
+<!-- RES FRESCA -->
 <div class="section open" id="sec-res">
-<div class="section-head" onclick="toggle('sec-res')">🐄 RES Y CERDO - FRESCA <span class="arrow">▼</span></div>
-<div class="section-desc"><span class="tag">RANCHO LAS IGUANAS · TEPOZTLÁN</span><br>Pedidos viernes, entregas lunes. Una res por semana. Cortes especiales por WhatsApp.</div>
+<div class="section-head" onclick="toggle('sec-res')">🐄 CARNES FRESCAS - RES Y CERDO <span class="arrow">▼</span></div>
+<div class="tabs">
+<button class="tab-btn active" onclick="switchTab(this,'res-prod')">Productos</button>
+<button class="tab-btn" onclick="switchTab(this,'res-info')">Info</button>
+</div>
+<div id="res-prod" class="tab-panel active" style="padding:0">
+<div class="section-desc"><span class="tag">RANCHO LAS IGUANAS · TEPOZTLÁN, MORELOS</span><br>Pedidos mar-vie, entregas lunes. Cortes especiales y cantidades personalizadas por WhatsApp.</div>
 <div class="grid" id="grid-res"></div>
 </div>
+<div id="res-info" class="tab-panel"><div class="info-box">
+<b>Rancho Las Iguanas</b> pertenece a una comunidad indígena y trabaja con un modelo de crianza que aprovecha los pastizales de las montañas de Tepoztlán.<br><br>
+Las vacas pastan libremente durante sus primeros dos años de vida. Después pasan entre cuatro y seis meses en el rancho, donde complementan su alimentación con sorgo y grano de maíz orgánico de la región.<br><br>
+El rancho no cuenta con certificación orgánica. Preferimos compartir con transparencia las prácticas de crianza y alimentación que conocemos.<br><br>
+El catálogo disponible es solo una muestra de lo que podemos ofrecer. La disponibilidad es limitada: se procesa aproximadamente una res por semana.
+</div></div>
+</div>
 
+<!-- CONGELADA -->
 <div class="section" id="sec-congelada">
-<div class="section-head" onclick="toggle('sec-congelada')">❄️ RES Y CERDO - CONGELADA <span class="arrow">▼</span></div>
-<div class="section-desc"><span class="tag" style="background:#009ee3">CARNES ORGÁNICAS CONGELADAS</span><br>Premium con certificación orgánica. Entregas lun, mie y vie en stock.</div>
+<div class="section-head" onclick="toggle('sec-congelada')">❄️ CARNES ORGÁNICAS CONGELADAS <span class="arrow">▼</span></div>
+<div class="tabs">
+<button class="tab-btn active" onclick="switchTab(this,'cong-prod')">Productos</button>
+<button class="tab-btn" onclick="switchTab(this,'cong-info')">Info</button>
+</div>
+<div id="cong-prod" class="tab-panel active" style="padding:0">
+<div class="section-desc"><span class="tag" style="background:#009ee3">RES Y CERDO · CAMPO ALEGRE · YAUTEPEC</span><br>Carnes premium con certificación orgánica. En stock entregas lun, mie y vie.</div>
 <div class="grid" id="grid-congelada"></div>
 </div>
+<div id="cong-info" class="tab-panel"><div class="info-box">
+Carnes premium de res y cerdo con certificación orgánica, seleccionadas por su calidad y procedencia.<br><br>
+Trabajamos con Campo Alegre para acercarte productos que combinan calidad gastronómica y prácticas de producción certificadas.
+</div></div>
+</div>
 
+<!-- POLLO -->
 <div class="section" id="sec-pollo">
-<div class="section-head" onclick="toggle('sec-pollo')">🐔 POLLO Y HUEVO <span class="arrow">▼</span></div>
-<div class="section-desc"><span class="tag">POLLO ORGÁNICO - CAMPO ALEGRE · YAUTEPEC</span><br>Pollo orgánico y huevo de libre pastoreo.</div>
+<div class="section-head" onclick="toggle('sec-pollo')">🐔 POLLO ORGÁNICO <span class="arrow">▼</span></div>
+<div class="tabs">
+<button class="tab-btn active" onclick="switchTab(this,'pollo-prod')">Productos</button>
+<button class="tab-btn" onclick="switchTab(this,'pollo-info')">Info</button>
+</div>
+<div id="pollo-prod" class="tab-panel active" style="padding:0">
+<div class="section-desc"><span class="tag">CAMPO ALEGRE · YAUTEPEC, MORELOS</span><br>Pollo orgánico congelado, seleccionado por su calidad, sabor y textura.</div>
 <div class="grid" id="grid-pollo"></div>
 </div>
-
-<div class="section" id="sec-pavo">
-<div class="section-head" onclick="toggle('sec-pavo')">🦃 PAVO <span class="arrow">▼</span></div>
-<div class="section-desc"><span class="tag">PAVO DE CRIANZA FAMILIAR · TLAYACAPAN</span><br>Pavo de crianza familiar. Disponibilidad por temporada.</div>
-<div class="grid" id="grid-pavo"></div>
+<div id="pollo-info" class="tab-panel"><div class="info-box">
+Pollo orgánico congelado, seleccionado por su calidad, sabor y textura.<br><br>
+Campo Alegre abastece a reconocidos restaurantes de la Ciudad de México, entre ellos Lucho Martínez, Botánico, Propio, Maizajo, Meroma y Malix.<br><br>
+Una opción para quienes valoran la calidad de los ingredientes desde su origen.
+</div></div>
 </div>
 
+<!-- HUEVO -->
+<div class="section" id="sec-huevo">
+<div class="section-head" onclick="toggle('sec-huevo')">🥚 HUEVO DE PRODUCCIÓN FAMILIAR <span class="arrow">▼</span></div>
+<div class="tabs">
+<button class="tab-btn active" onclick="switchTab(this,'huevo-prod')">Productos</button>
+<button class="tab-btn" onclick="switchTab(this,'huevo-info')">Info</button>
+</div>
+<div id="huevo-prod" class="tab-panel active" style="padding:0">
+<div class="section-desc"><span class="tag">HUEVO DE PASTOREO · TEPOZTLÁN, MORELOS</span></div>
+<div class="grid" id="grid-huevo"></div>
+</div>
+<div id="huevo-info" class="tab-panel"><div class="info-box">
+Nuestro huevo proviene de una producción familiar local. Las gallinas se crían mediante un sistema de pastoreo rotativo, con acceso al pasto y la posibilidad de alimentarse de insectos y vegetación, además de recibir complementos alimenticios.<br><br>
+Un producto de origen cercano que reconoce el trabajo cotidiano de las familias productoras.
+</div></div>
+</div>
+
+<!-- PAVO -->
+<div class="section" id="sec-pavo">
+<div class="section-head" onclick="toggle('sec-pavo')">🦃 PAVO <span class="arrow">▼</span></div>
+<div class="grid" id="grid-pavo" style="padding-top:12px"></div>
+</div>
+
+<!-- MASCOTAS -->
 <div class="section" id="sec-mascotas">
 <div class="section-head" onclick="toggle('sec-mascotas')">🐾 MASCOTAS <span class="arrow">▼</span></div>
 <div class="grid" id="grid-mascotas"></div>
+</div>
+
+<!-- LÁCTEOS -->
+<div class="section" id="sec-lacteos">
+<div class="section-head" onclick="toggle('sec-lacteos')">🧀 LÁCTEOS · PRÓXIMAMENTE <span class="arrow">▼</span></div>
+<div class="tab-panel active" style="display:block">
+<div class="info-box">
+<b>Rancho familiar Sierra Encantada · Huitzilac, Morelos</b><br><br>
+Actualmente, las cabras están en gestación y esperamos que sus productos estén disponibles a partir de diciembre.<br>
+Muy pronto compartiremos más sobre esta nueva historia.
+</div>
+</div>
+</div>
+
+<!-- ALACENA -->
+<div class="section" id="sec-alacena">
+<div class="section-head" onclick="toggle('sec-alacena')">🍯 ALACENA <span class="arrow">▼</span></div>
+<div class="tab-panel active" style="display:block">
+<div class="info-box">
+<b>Miel · San Andrés de la Cal, Tepoztlán</b><br>
+Miel de producciones familiares de San Andrés de la Cal<br><br>
+<b>Café · Tetela del Volcán</b><br>
+Café orgánico de cosecha familiar del sur de la Ciudad de México, en las faldas del Popocatépetl, en Morelos.<br><br>
+<small>Próximamente disponibles para agregar a tu hielera.</small>
+</div>
+</div>
 </div>
 
 <div class="cart">
@@ -77,30 +171,34 @@ h1{margin:0;font-size:28px}
 <small id="det">Toca una categoría para ver productos</small>
 <div id="lista"></div>
 <div class="cart-actions">
-<button class="btn-mp" onclick="irCheckout()">Pagar</button>
+<button class="btn-mp" onclick="irCheckout()">Pagar con tarjeta /  Pay</button>
 <button class="btn-wa" onclick="wa()">WhatsApp</button>
 </div>
 </div>
 
 <script>
-// PRODUCTOS - YA DENTRO DEL INDEX PARA QUE NO FALLE VERCEL
-const polloProds=[["HUEVO PZA",7,"huevo.jpg"],["PECHUGA DESHUESADA 550-600g",252,"pechugadeshuesada.jpg"],["ALITAS 500g 5pzas",95,"alitas.jpg"],["FAJITAS POLLO 500g",200,"fajitaspollo.jpg"],["PIERNA C/MUSLO 550g",137,"piernaconmuslo.jpg"],["PIERNA 500g",105,"piernapollo.jpg"],["MILANESA POLLO 500g",263,"milanesadepollo.jpg"],["MOLIDA POLLO 500g",150,"molidapollo.jpg"],["HAMB POLLO 4pzas",252,"hamburguesapollo.jpg"],["KIT CONSOME",79,"kitcaldopollo.jpg"]];
+const polloProds=[["PECHUGA DESHUESADA 550-600g",252,"pechugadeshuesada.jpg"],["ALITAS 500g 5pzas",95,"alitas.jpg"],["FAJITAS POLLO 500g",200,"fajitaspollo.jpg"],["PIERNA C/MUSLO 550g",137,"piernaconmuslo.jpg"],["PIERNA 500g",105,"piernapollo.jpg"],["MILANESA POLLO 500g",263,"milanesadepollo.jpg"],["MOLIDA POLLO 500g",150,"molidapollo.jpg"],["HAMB POLLO 4pzas",252,"hamburguesapollo.jpg"],["KIT CONSOME",79,"kitcaldopollo.jpg"]];
+const huevoProds=[["HUEVO PZA",7,"huevo.jpg"]];
 const pavoProds=[["HAMB PAVO 4pzas",315,"hamburguesapavo.jpg"],["MOLIDA PAVO 500g",247,"molidapavo.jpg"],["PAVO TG (APARTADO) - $350 POR KILO",350,"pavoTG.jpg"]];
 const resProds=[["ARRACHERA 500g",336,"arrachera.jpg"],["BISTEC 500g",336,"bistec.jpg"],["CECINA 500g",350,"cecina.jpg"],["CHORIZO 500g",241,"chorizo.jpg"],["BABYBACK 1kg",460,"costillas.jpg"],["FILETE 500g",404,"filete.jpg"],["LOMO 500g",263,"lomo.jpg"],["MILANESA 500g",341,"milanesa.jpg"],["MOLIDA 500g",252,"molida.jpg"],["MOLIDA DIEZMILLO 500g",336,"molidadiezmillo.jpg"],["PICANA 500g",322,"picana.jpg"],["RETAZO 500g",216,"retazo.jpg"],["SIRLOIN 500g",350,"sirloin.jpg"],["TOCINO 250g",299,"tocino.jpg"],["GAONERA DE RIBEYE 500g",380,"gaoneraribeye.jpeg"]];
 const mascotaProds=[["MEZCLA DE POLLO PARA MASCOTAS 500g",75,"pollomascotas.jpg"]];
 const resDomesticosProds=[["ARRACHERA MARINADA 500g PREMIUM",389,"arracheramarinada.jpg"],["BISTECK 500g PREMIUM 5 PZS",247,"bistecrescongelado.jpg"],["CALDO DE HUESOS 500ml",205,"caldodehuesos500.jpg"],["CARNE P/ DESHEBRAR DE PIERNA 500g",226,"carnedeshebrar.jpg"],["HAMBURGUESA 400g PREMIUM 4 PZS",252,"hamburguesaprime.jpg"],["MOLIDA DE RES 500g 95/5 PREMIUM",268,"hamburguesaprime.jpg"],["MILANESA 500g PREMIUM 4 PZS",273,"milanesaderescongelada.jpg"],["FILETE EN TROZO PREMIUM 500g",310,"fileterescongelado.jpg"]];
 const cerdoDomesticosProds=[["BISTEC LOMO 500g PREMIUM 5 PZS",210,"bistecdelomodecerdo.jpg"],["CHORIZO ESPAÑOL 350g PREMIUM 3 PZS",278,"chorizocongelado.jpg"],["SALCHICHA DESAYUNO 350g 9 PZS",289,"salchicha.jpg"],["TOCINO AHUMADO 350g PREMIUM",420,"tocinoahumado.jpg"],["COSTILLA P/ ASAR 1kg PREMIUM",399,"costillaasar1kg.jpg"]];
 const resCongeladaProds=[...resDomesticosProds,...cerdoDomesticosProds];
-</script>
 
-<script>
 function toggle(id){ document.getElementById(id).classList.toggle('open'); }
-let cart=[];
-try{ let raw=localStorage.getItem('meatnlove-cart'); if(raw){ cart=JSON.parse(raw).filter(c=>c&&c.name&&c.qty>0); } }catch(e){ cart=[]; }
+function switchTab(btn, id){
+  let parent = btn.closest('.section') || btn.closest('.manifesto');
+  parent.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  parent.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+let cart=[]; try{ let raw=localStorage.getItem('meatnlove-cart'); if(raw){ cart=JSON.parse(raw).filter(c=>c&&c.name&&c.qty>0); } }catch(e){ cart=[]; }
 function saveCart(){ localStorage.setItem('meatnlove-cart', JSON.stringify(cart)); }
 function imgTag(f){ if(!f) return `<div style="height:150px;background:#E8D6B7;border-radius:12px"></div>`; return `<img src="img/${encodeURI(f)}" loading="lazy" onerror="this.src='img/img/${encodeURI(f)}'">`; }
 function addGrid(id, lista){
-  let grid=document.getElementById(id); if(!grid) return; if(!lista||!lista.length){ grid.innerHTML=''; return; }
+  let grid=document.getElementById(id); if(!grid) return;
   grid.innerHTML='';
   lista.forEach(p=>{
     let nombre=p[0]; let precio=p[1]; let foto=p[2]||'';
@@ -110,6 +208,7 @@ function addGrid(id, lista){
 addGrid('grid-res', resProds);
 addGrid('grid-congelada', resCongeladaProds);
 addGrid('grid-pollo', polloProds);
+addGrid('grid-huevo', huevoProds);
 addGrid('grid-pavo', pavoProds);
 addGrid('grid-mascotas', mascotaProds);
 function addP(name,price){ let f=cart.find(c=>c.name===name); if(f) f.qty++; else cart.push({name,price,qty:1}); render(); }
