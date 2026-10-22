@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Checkout - meat & love</title>
+<style>
+body{margin:0;font-family:Helvetica,Arial,sans-serif;background:#E8D6B7;color:#1E3A2F;padding:20px;line-height:1.5}
+.box{max-width:600px;margin:0 auto;background:#fff;border-radius:20px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.1)}
+h1{margin:0 0 12px;font-size:22px}
+.item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;font-size:14px}
+.total{font-weight:900;font-size:18px;margin:16px 0}
+.opt{display:flex;gap:8px;margin:12px 0}
+.opt button{flex:1;padding:12px;border-radius:10px;border:2px solid #1E3A2F;font-weight:900;cursor:pointer}
+.opt button.active{background:#1E3A2F;color:#fff}
+input,textarea,select{width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:10px;font-size:14px;box-sizing:border-box}
+.btn{width:100%;padding:14px;border:0;border-radius:12px;font-weight:900;font-size:16px;cursor:pointer;margin-top:8px}
+.btn-pay{background:#1E3A2F;color:#fff}
+.btn-wa{background:#25D366;color:#fff}
+.btn-back{background:#eee;color:#1E3A2F}
+small{color:#666}
+#msg{color:#c00;font-weight:700;margin:8px 0}
+</style>
+</head>
+<body>
+<div class="box">
+<h1>Tu pedido ♡</h1>
+<div id="items"></div>
+<div class="total" id="total"></div>
+
+<div class="opt">
+<button id="b-envio" class="active" onclick="setDel('envio')">🚚 Envío $99</button>
+<button id="b-pickup" onclick="setDel('pickup')">🏠 Recoger Gratis</button>
+</div>
+<div id="envio-info" style="font-size:13px;background:#F5EBDA;padding:10px;border-radius:10px">Morvan 196 B - Entrega CDMX. Gratis en pedidos $1500+</div>
+
+<h3 style="margin-top:16px">Datos</h3>
+<input id="nombre" placeholder="Nombre completo *">
+<input id="telefono" placeholder="WhatsApp *">
+<input id="email" placeholder="Email (para ticket)">
+<div id="dir-fields">
+<input id="calle" placeholder="Calle y número *">
+<input id="colonia" placeholder="Colonia *">
+<input id="alcaldia" placeholder="Alcaldía *">
+<input id="cp" placeholder="CP">
+<input id="ref" placeholder="Referencia / entre calles">
+</div>
+<textarea id="nota" placeholder="Notas"></textarea>
+<div id="msg"></div>
+
+<button class="btn btn-pay" id="payBtn" onclick="pagar()">Pagar con tarjeta</button>
+<button class="btn btn-wa" onclick="enviarWA()">Solo WhatsApp</button>
+<button class="btn btn-back" onclick="location.href='index.html'">← Seguir comprando</button>
+</div>
+
+<script>
+let cart=[]; try{ cart=JSON.parse(localStorage.getItem('meatnlove-cart')||'[]'); }catch(e){ cart=[]; }
+let deliveryOption='envio';
+function setDel(opt){
+  deliveryOption=opt;
+  document.getElementById('b-envio').className=opt=='envio'?'active':'';
+  document.getElementById('b-pickup').className=opt=='pickup'?'active':'';
+  document.getElementById('dir-fields').style.display=opt=='pickup'?'none':'block';
+  document.getElementById('envio-info').innerText=opt=='pickup'?'Recoger en Morvan 196 B - GRATIS':'Entrega CDMX. Gratis en pedidos de $1500 o más';
+  render();
+}
+function render(){
+  let box=document.getElementById('items');
+  let totalEl=document.getElementById('total');
+  if(!cart.length){ box.innerHTML='<p>Carrito vacío</p>'; totalEl.innerText=''; return; }
+  let sub=cart.reduce((a,b)=>a+b.price*b.qty,0);
+  let env=0;
+  if(deliveryOption!='pickup'){ env = sub>=1500?0:99; }
+  box.innerHTML=cart.map(p=>`<div class="item"><span>${p.name} x${p.qty}</span><span>$${p.price*p.qty}</span></div>`).join('');
+  box.innerHTML+=`<div class="item"><span>Subtotal</span><span>$${sub}</span></div><div class="item"><span>${deliveryOption=='pickup'?'Recoger':'Envío'}</span><span>${env==0?'GRATIS':'$'+env}</span></div>`;
+  totalEl.innerText=`Total: $${sub+env}`;
+  window._calc={subtotal:sub, total:sub+env, envio:env};
+}
+render();
+
+async function pagar(){
+  if(!cart.length) return;
+  let nombre=document.getElementById('nombre').value.trim();
+  let telefono=document.getElementById('telefono').value.trim();
+  if(!nombre||!telefono){ document.getElementById('msg').innerText='Pon nombre y WhatsApp'; return; }
+  document.getElementById('payBtn').innerText='Creando link de pago...';
+  document.getElementById('payBtn').disabled=true;
+  let customer={
+    nombre, telefono,
+    email:document.getElementById('email').value.trim(),
+    calle:document.getElementById('calle').value.trim(),
+    colonia:document.getElementById('colonia').value.trim(),
+    alcaldia:document.getElementById('alcaldia').value.trim(),
+    cp:document.getElementById('cp').value.trim(),
+    ref:document.getElementById('ref').value.trim()
+  };
+  let address=`${customer.calle}, ${customer.colonia}, ${customer.alcaldia} ${customer.cp}`.substring(0,400);
+  let whatsappMessage=cart.map(p=>`• ${p.name} x${p.qty}`).join('\\n');
+  try{
+    let r=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cart, deliveryOption, customer, address, subtotal:window._calc.subtotal, total:window._calc.total, whatsappMessage})});
+    let j=await r.json();
+    if(j.url){ location.href=j.url; } else { document.getElementById('msg').innerText=j.error||'Error'; document.getElementById('payBtn').innerText='Pagar con tarjeta'; document.getElementById('payBtn').disabled=false; }
+  }catch(e){ document.getElementById('msg').innerText=e.message; document.getElementById('payBtn').innerText='Pagar con tarjeta'; document.getElementById('payBtn').disabled=false; }
+}
+function enviarWA(){
+  if(!cart.length) return;
+  let sub=window._calc.subtotal; let env=window._calc.envio;
+  let list=cart.map(p=>`• ${p.name} x${p.qty} - $${p.price*p.qty}`).join('\n');
+  let msg=`Hola Meat & Love! ♡\\nPEDIDO:\\n${list}\\nSubtotal $${sub} Envio ${env==0?'GRATIS':'$'+env} Total $${sub+env}\\nNombre: ${document.getElementById('nombre').value}`;
+  window.open(`https://wa.me/525611281892?text=${encodeURIComponent(msg)}`,'_blank');
+}
+</script>
+</body>
+</html>
