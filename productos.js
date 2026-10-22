@@ -54,11 +54,11 @@ const resDomesticosProds=[
 ];
 
 const cerdoDomesticosProds=[
-["BISTEC LOMO 500g PREMIUM 5 PZS",210,"bisteclomo500_5pzas.jpg"],
-["CHORIZO ESPAÑOL 350g PREMIUM 3 PZS",278,"chorizoespanol350_3pzas.jpg"],
-["SALCHICHA DESAYUNO 350g 9 PZS",289,"salchichadesayuno350_9pzas.jpg"],
-["TOCINO AHUMADO 350g PREMIUM",420,"tocinoahumado350.jpg"],
-["COSTILLA P/ ASAR 1kg PREMIUM",399,"costillaasar1kg.jpg"]
+["BISTEC LOMO 500g PREMIUM 5 PZS",210,"bisteclomo.jpg"],
+["CHORIZO ESPAÑOL 350g PREMIUM 3 PZS",278,"chorizoespanol.jpg"],
+["SALCHICHA DESAYUNO 350g 9 PZS",289,"salchicha.jpg"],
+["TOCINO AHUMADO 350g PREMIUM",420,"tocinoahumado.jpg"],
+["COSTILLA P/ ASAR 1kg PREMIUM",399,"costillaasar.jpg"]
 ];
 
 const resCongeladaProds = [...resDomesticosProds, ...cerdoDomesticosProds];
