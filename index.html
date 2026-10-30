@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>meat & love</title>
 <style>
-body{margin:0;font-family:Helvetica,Arial,sans-serif;background:#E8D6B7;color:#1E3A2F;padding-bottom:130px;line-height:1.5}
+body{margin:0;font-family:Helvetica,Arial,sans-serif;background:#E8D6B7;color:#1E3A2F;padding-bottom:180px;line-height:1.5}
 .banner-envio{background:#1E3A2F;color:#fff;text-align:center;padding:10px 12px;font-size:13px;font-weight:900;position:sticky;top:0;z-index:10000}
 header{text-align:center;padding:24px 20px;background:#F5EBDA}
 header img{width:190px;height:190px;border-radius:50%;display:block;margin:0 auto 12px;object-fit:cover;background:#fff;border:3px solid #fff}
@@ -29,6 +29,7 @@ h1{margin:0;font-size:28px}
 .card h3{font-size:11px;margin:8px 0 2px;text-transform:uppercase;min-height:28px;line-height:1.2}
 .card b{font-size:14px}
 .btn{width:100%;background:#1E3A2F;color:#fff;border:0;padding:9px;border-radius:10px;font-weight:800;margin-top:auto;cursor:pointer}
+.delivery-box{max-width:1000px;margin:14px auto 0;background:#fff;padding:14px 16px;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .cart{position:fixed;bottom:12px;left:12px;right:12px;background:#1E3A2F;color:#fff;padding:14px;border-radius:16px;z-index:9999}
 .cart-item{display:flex;justify-content:space-between;background:#2a4d3f;padding:6px 10px;border-radius:8px;margin-top:6px;font-size:13px}
 .cart-actions{display:flex;gap:8px;margin-top:8px}
@@ -37,7 +38,7 @@ h1{margin:0;font-size:28px}
 </style>
 </head>
 <body>
-<div class="banner-envio">🚚 ¡ENVÍO GRATIS en pedidos de $1500 o más! CDMX</div>
+<div class="banner-envio">🚚 ¡ENVÍO GRATIS en pedidos de $1500 o más! CDMX · 📍 Recoger GRATIS disponible</div>
 <header>
 <img src="img/logo.png" onerror="this.src='img/img/logo.png'" alt="logo">
 <h1>meat & love ♡</h1>
@@ -179,6 +180,19 @@ Café orgánico de cosecha familiar del sur de la Ciudad de México, en las fald
 </div>
 </div>
 
+<!-- NUEVO: OPCIONES DE ENTREGA -->
+<div class="delivery-box">
+  <b style="font-size:13px">📦 ¿CÓMO QUIERES RECIBIR TU PEDIDO?</b>
+  <label style="display:flex;align-items:center;gap:10px;margin:12px 0 0;padding:10px;border:1.5px solid #E8D6B7;border-radius:10px;cursor:pointer">
+    <input type="radio" name="deliveryOption" value="envio" checked onchange="setDelivery(this.value)" style="width:18px;height:18px">
+    <span style="font-size:13px"><b>Envío a domicilio CDMX $99</b><br><small>Gratis en pedidos de $1500 o más · Lunes 8am-3pm</small></span>
+  </label>
+  <label style="display:flex;align-items:center;gap:10px;margin:8px 0 0;padding:10px;border:1.5px solid #1E3A2F;border-radius:10px;cursor:pointer;background:#F5EBDA">
+    <input type="radio" name="deliveryOption" value="pickup" onchange="setDelivery(this.value)" style="width:18px;height:18px">
+    <span style="font-size:13px"><b>📍 Recoger GRATIS - Morvan 196 B, Virreyes</b><br><small>Sin costo · Lunes 2pm-8pm · Te avisamos por WhatsApp</small></span>
+  </label>
+</div>
+
 <div class="cart">
 <b id="total">Carrito vacío</b>
 <small id="det">Toca una categoría para ver productos</small>
@@ -207,7 +221,16 @@ function switchTab(btn, id){
   document.getElementById(id).classList.add('active');
   btn.classList.add('active');
 }
-let cart=[]; try{ let raw=localStorage.getItem('meatnlove-cart'); if(raw){ cart=JSON.parse(raw).filter(c=>c&&c.name&&c.qty>0); } }catch(e){ cart=[]; }
+let cart=[]; 
+let deliveryOption = localStorage.getItem('meatnlove-delivery') || 'envio';
+
+function setDelivery(val){
+  deliveryOption = val;
+  localStorage.setItem('meatnlove-delivery', val);
+  render();
+}
+
+try{ let raw=localStorage.getItem('meatnlove-cart'); if(raw){ cart=JSON.parse(raw).filter(c=>c&&c.name&&c.qty>0); } }catch(e){ cart=[]; }
 function saveCart(){ localStorage.setItem('meatnlove-cart', JSON.stringify(cart)); }
 function imgTag(f){ if(!f) return `<div style="height:150px;background:#E8D6B7;border-radius:12px"></div>`; return `<img src="img/${encodeURI(f)}" loading="lazy" onerror="this.src='img/img/${encodeURI(f)}'">`; }
 function addGrid(id, lista){
@@ -224,9 +247,13 @@ addGrid('grid-pollo', polloProds);
 addGrid('grid-huevo', huevoProds);
 addGrid('grid-pavo', pavoProds);
 addGrid('grid-mascotas', mascotaProds);
+
 function addP(name,price){ let f=cart.find(c=>c.name===name); if(f) f.qty++; else cart.push({name,price,qty:1}); render(); }
 function render(){
   saveCart();
+  // sincroniza radio
+  document.querySelectorAll('input[name="deliveryOption"]').forEach(r=> r.checked = r.value===deliveryOption);
+  
   let lista=document.getElementById('lista'); lista.innerHTML='';
   let clean=cart.filter(c=>c.qty>0); cart=clean;
   if(!clean.length){
@@ -236,9 +263,11 @@ function render(){
   }
   let s=clean.reduce((a,b)=>a+b.price*b.qty,0);
   let c=clean.reduce((a,b)=>a+b.qty,0);
-  let env=s>=1500?0:99;
-  document.getElementById('total').innerText=`Total: $${s+env} (${c}) ${env==0?'ENVÍO GRATIS 🎉':''}`;
-  document.getElementById('det').innerText= env==0?`Subtotal $${s} + Envío GRATIS`:`Subtotal $${s} + Envío $99 - Te faltan $${1500-s} para gratis`;
+  let env = deliveryOption==='pickup' ? 0 : (s>=1500?0:99);
+  
+  document.getElementById('total').innerText=`Total: $${s+env} (${c}) ${deliveryOption==='pickup' ? '📍 RECOGER GRATIS' : (env==0?'ENVÍO GRATIS 🎉':'')}`;
+  document.getElementById('det').innerText= deliveryOption==='pickup' ? `Subtotal $${s} + Recoger GRATIS en Morvan 196 B` : (env==0?`Subtotal $${s} + Envío GRATIS`:`Subtotal $${s} + Envío $99 - Te faltan $${1500-s} para gratis`);
+  
   clean.forEach((it,idx)=>{
     lista.innerHTML+=`<div class="cart-item"><span>${it.name} x${it.qty}</span><span><button onclick="cambia(${idx},-1)">-</button><button onclick="cambia(${idx},1)">+</button><button onclick="quita(${idx})">X</button></span></div>`;
   });
@@ -249,9 +278,10 @@ function irCheckout(){ if(!cart.length) return alert('Agrega algo'); location.hr
 function wa(){
   if(!cart.length) return alert('Agrega algo');
   let s=cart.reduce((a,b)=>a+b.price*b.qty,0);
-  let env=s>=1500?0:99;
+  let env = deliveryOption==='pickup' ? 0 : (s>=1500?0:99);
+  let tipo = deliveryOption==='pickup' ? '📍 RECOGER en Morvan 196 B' : '🚚 ENVÍO';
   let list=cart.map(p=>`• ${p.name} x${p.qty}`).join('\n');
-  let msg=`Hola Meat & Love! Pedido:\n${list}\nTotal $${s+env}`;
+  let msg=`Hola Meat & Love! Pedido ${tipo}:\n${list}\nTotal $${s+env}`;
   window.open(`https://wa.me/525611281892?text=${encodeURIComponent(msg)}`,'_blank');
 }
 render();
