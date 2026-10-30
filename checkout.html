@@ -21,7 +21,7 @@ small{color:#8a7a60;font-size:12px;display:block;text-align:center;margin-top:12
 .opt{display:flex;gap:8px;margin:12px 0}
 .opt button{flex:1;padding:12px;border-radius:12px;border:2px solid #1E3A2F;font-weight:900;cursor:pointer;background:#fff;color:#1E3A2F}
 .opt button.active{background:#1E3A2F;color:#fff}
-.pay-icon{font-size:18px}
+.info-pickup{display:none;background:#E8F5E9;border:1.5px solid #4CAF50;padding:14px;border-radius:12px;margin:12px 0;font-size:13px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -31,8 +31,16 @@ small{color:#8a7a60;font-size:12px;display:block;text-align:center;margin-top:12
 <div class="total" id="total"></div>
 
 <div class="opt">
-<button id="b-envio" class="active" onclick="setDel('envio')">🚚 Envío</button>
-<button id="b-pickup" onclick="setDel('pickup')">🏠 Recoger</button>
+<button id="b-envio" onclick="setDel('envio')">🚚 Envío $99</button>
+<button id="b-pickup" onclick="setDel('pickup')">📍 Recoger GRATIS</button>
+</div>
+
+<div id="info-pickup" class="info-pickup">
+<b>📍 Recoger GRATIS - Sin costo</b><br>
+<b>Morvan 196 B, Virreyes, Lomas Verdes</b><br>
+Lunes 2pm-8pm<br>
+Te avisamos por WhatsApp cuando esté listo.<br>
+<small style="text-align:left;margin-top:6px">No necesitas poner dirección completa, solo tu nombre.</small>
 </div>
 
 <label class="habitual" for="habitualCheck">
@@ -58,19 +66,32 @@ Pagar con tarjeta /  Apple Pay
 
 <script>
 let cart=[]; try{cart=JSON.parse(localStorage.getItem('meatnlove-cart')||'[]');}catch(e){}
-let deliveryOption='envio';
+// LEE LO QUE ELIGIÓ EN INDEX.HTML
+let deliveryOption = localStorage.getItem('meatnlove-delivery') || 'envio';
 let saved=null; try{saved=JSON.parse(localStorage.getItem('meatnlove-customer')||'null');}catch(e){}
 
 function setDel(opt){
   deliveryOption=opt;
+  localStorage.setItem('meatnlove-delivery', opt);
   document.getElementById('b-envio').className=opt=='envio'?'active':'';
   document.getElementById('b-pickup').className=opt=='pickup'?'active':'';
+  
+  // muestra / oculta info de recoger
+  document.getElementById('info-pickup').style.display = opt=='pickup' ? 'block' : 'none';
+  
+  // cambia placeholder de dirección
+  if(opt=='pickup'){
+    document.getElementById('direccion').placeholder = 'Colonia / referencia (opcional, para identificarte)';
+  } else {
+    document.getElementById('direccion').placeholder = 'Dirección completa (calle, número, colonia, alcaldía) *';
+  }
   render();
 }
 
 function toggleHab(){
   let isHab=document.getElementById('habitualCheck').checked;
   document.getElementById('form-fields').style.display=isHab?'none':'block';
+  document.getElementById('info-pickup').style.display = (isHab ? 'none' : (deliveryOption=='pickup' ? 'block' : 'none'));
   if(isHab && saved){
     document.getElementById('nombre').value=saved.nombre||'';
     document.getElementById('direccion').value=saved.direccion||'';
@@ -81,12 +102,20 @@ function render(){
   let box=document.getElementById('items'); let totalEl=document.getElementById('total');
   if(!cart.length){ box.innerHTML='<p>Carrito vacío</p>'; totalEl.innerText=''; return; }
   let sub=cart.reduce((a,b)=>a+b.price*b.qty,0);
-  let env=deliveryOption!='pickup'?(sub>=1500?0:99):0;
+  let env=deliveryOption=='pickup' ? 0 : (sub>=1500?0:99);
+  
   box.innerHTML=cart.map(p=>`<div class="item"><span>${p.name} x${p.qty}</span><span>$${p.price*p.qty}</span></div>`).join('');
-  totalEl.innerText=`Total: $${sub+env} ${env==0&&deliveryOption!='pickup'&&sub>0?'• ENVÍO GRATIS':''}`;
+  
+  if(deliveryOption=='pickup'){
+    totalEl.innerText=`Total: $${sub} • 📍 RECOGER GRATIS`;
+  } else {
+    totalEl.innerText=`Total: $${sub+env} ${env==0?'• ENVÍO GRATIS 🎉':`• Subtotal $${sub} + Envío $${env}`}`;
+  }
   window._calc={subtotal:sub,total:sub+env,envio:env};
 }
-render();
+
+// Inicializa con lo que viene del index
+setDel(deliveryOption);
 
 // precarga si es clienta habitual
 if(saved){
@@ -105,9 +134,18 @@ async function pagar(){
     if(!direccion) direccion=saved?.direccion||'Cliente habitual - ya tienen mis datos';
   }
   
-  if(!nombre||!direccion){
-    document.getElementById('msg').innerText='Pon nombre y dirección, o marca "Ya tienen mis datos"';
-    return;
+  // VALIDACIÓN DIFERENTE PARA PICKUP
+  if(deliveryOption=='pickup'){
+    if(!nombre){
+      document.getElementById('msg').innerText='Pon tu nombre para recoger';
+      return;
+    }
+    if(!direccion) direccion = 'RECOGER EN TIENDA - Morvan 196 B';
+  } else {
+    if(!nombre||!direccion){
+      document.getElementById('msg').innerText='Pon nombre y dirección, o marca "Ya tienen mis datos"';
+      return;
+    }
   }
   
   localStorage.setItem('meatnlove-customer', JSON.stringify({nombre,direccion}));
@@ -124,21 +162,25 @@ async function pagar(){
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        cart, deliveryOption, customer, address:direccion,
-        subtotal:window._calc.subtotal, total:window._calc.total,
-        whatsappMessage:isHab?'CLIENTE HABITUAL - YA TIENEN MIS DATOS':''
+        cart, 
+        deliveryOption, // <-- ESTO LE DICE A TU API QUE COBRE $0
+        customer, 
+        address:direccion,
+        subtotal:window._calc.subtotal, 
+        total:window._calc.total,
+        whatsappMessage: deliveryOption=='pickup' ? '📍 CLIENTE VA A RECOGER - Morvan 196 B' : (isHab?'CLIENTE HABITUAL - YA TIENEN MIS DATOS':'')
       })
     });
     let j=await r.json();
     if(j.url) location.href=j.url;
     else {
       document.getElementById('msg').innerText=j.error||'Error con Stripe, verifica tu STRIPE_SECRET_KEY en Vercel';
-      document.getElementById('payBtn').innerHTML='<span style="display:flex;align-items:center;justify-content:center;gap:8px">Pagar con tarjeta /  Apple Pay</span>';
+      document.getElementById('payBtn').innerHTML='Pagar con tarjeta /  Apple Pay';
       document.getElementById('payBtn').disabled=false;
     }
   }catch(e){
     document.getElementById('msg').innerText=e.message;
-    document.getElementById('payBtn').innerHTML='<span style="display:flex;align-items:center;justify-content:center;gap:8px">Pagar con tarjeta /  Apple Pay</span>';
+    document.getElementById('payBtn').innerHTML='Pagar con tarjeta /  Apple Pay';
     document.getElementById('payBtn').disabled=false;
   }
 }
