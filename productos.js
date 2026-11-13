@@ -45,7 +45,7 @@ const mascotaProds=[
 const resDomesticosProds=[
 ["ARRACHERA MARINADA 500g PREMIUM",389,"arracheramarinada.jpg"],
 ["BISTECK 500g PREMIUM 5 PZS",247,"bistecrescongelado.jpg"],
-["CALDO DE HUESOS 500ml",205,"caldodehuesos500.jpg"],
+["CALDO DE HUESOS 500ml",205,"caldo huesos.jpg"],
 ["CARNE P/ DESHEBRAR DE PIERNA 500g",226,"carnedeshebrar.jpg"],
 ["HAMBURGUESA 400g PREMIUM 4 PZS",252,"hamburguesaprime.jpg"],
 ["MOLIDA DE RES 500g 95/5 PREMIUM",268,"hamburguesaprime.jpg"],
