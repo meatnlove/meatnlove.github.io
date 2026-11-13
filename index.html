@@ -61,6 +61,11 @@ h1{margin:0;font-size:28px}
 <!-- RES FRESCA -->
 <div class="section open" id="sec-res">
 <div class="section-head" onclick="toggle('sec-res')">🐄 CARNES FRESCAS - RES Y CERDO <span class="arrow">▼</span></div>
+<div id="aviso-res" style="display:none;background:#1E3A2F;color:#fff;padding:12px 16px;font-size:13px;line-height:1.5">
+<b>⏸️ PAUSA TEMPORAL · 12 al 23 de noviembre</b><br>
+La carne fresca de Rancho Las Iguanas no estará disponible del 12 al 23 de noviembre, para respetar los tiempos entre sacrificios.<br>
+Vuelve el 24 de noviembre. Mientras tanto, puedes pedir carne congelada de Campo Alegre y miel de San Andrés de la Cal, con entregas lun, mie y vie.
+</div>
 <div class="tabs">
 <button class="tab-btn active" onclick="switchTab(this,'res-prod')">Productos</button>
 <button class="tab-btn" onclick="switchTab(this,'res-info')">Info</button>
@@ -264,10 +269,25 @@ addGrid('grid-pavo', pavoProds);
 addGrid('grid-mascotas', mascotaProds);
 addGrid('grid-miel', alacenaProds);
 
+// PAUSA CARNE FRESCA 12-23 NOV
+const hoy = new Date();
+const inicioPausa = new Date(2026, 10, 12);
+const finPausa = new Date(2026, 10, 23, 23, 59, 59);
+const enPausaRes = hoy >= inicioPausa && hoy <= finPausa;
+
+if(enPausaRes){
+  const aviso = document.getElementById('aviso-res');
+  if(aviso) aviso.style.display = 'block';
+  const gridRes = document.getElementById('grid-res');
+  if(gridRes) gridRes.innerHTML = `<div style="grid-column:1/-1;background:#F5EBDA;padding:16px;border-radius:12px;text-align:center;font-size:13px"><b>Carne fresca no disponible del 12 al 23 de noviembre</b><br>Para respetar los tiempos entre sacrificios.<br><br>Te recomendamos carne congelada de Campo Alegre 🧊 y miel 🍯</div>`;
+  const nombresRes = resProds.map(p=>p[0]);
+  cart = cart.filter(c=>!nombresRes.includes(c.name));
+  render();
+}
+
 function addP(name,price){ let f=cart.find(c=>c.name===name); if(f) f.qty++; else cart.push({name,price,qty:1}); render(); }
 function render(){
   saveCart();
-  // sincroniza radio
   document.querySelectorAll('input[name="deliveryOption"]').forEach(r=> r.checked = r.value===deliveryOption);
   
   let lista=document.getElementById('lista'); lista.innerHTML='';
