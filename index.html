@@ -169,15 +169,28 @@ Muy pronto compartiremos más sobre esta nueva historia.
 <!-- ALACENA -->
 <div class="section" id="sec-alacena">
 <div class="section-head" onclick="toggle('sec-alacena')">🍯 ALACENA <span class="arrow">▼</span></div>
-<div class="tab-panel active" style="display:block">
-<div class="info-box">
-<b>Miel · San Andrés de la Cal, Tepoztlán</b><br>
-Miel de producciones familiares de San Andrés de la Cal<br><br>
+<div class="tabs">
+<button class="tab-btn active" onclick="switchTab(this,'alacena-prod')">Productos</button>
+<button class="tab-btn" onclick="switchTab(this,'alacena-info')">Info</button>
+</div>
+<div id="alacena-prod" class="tab-panel active" style="padding:0">
+<div class="section-desc"><span class="tag">MIEL · SAN ANDRÉS DE LA CAL, TEPOZTLÁN</span><br>Miel de producciones familiares. Entregas lun-vie.</div>
+<div class="grid" id="grid-miel"></div>
+</div>
+<div id="alacena-info" class="tab-panel"><div class="info-box">
+<b>Miel de San Andrés de la Cal</b><br><br>
+Una miel nacida entre los montes de Tepoztlán, donde las abejas recorren la diversidad floral de la selva baja y los bosques de la región. Su carácter multifloral refleja la riqueza de un paisaje que cambia con las estaciones y las floraciones, encontrarás muchos diferentes sabores.<br><br>
+Producida por familias apicultoras locales que han mantenido la tradición por generaciones, es una expresión dulce de la biodiversidad y la tradición de ésta tierra mágica.<br><br>
+<b>Miel líquida multiflora 500g</b><br>
+Ideal para endulzar bebidas.<br><br>
+<b>Miel mantequilla de cazahuate 500g</b><br>
+Espesa, ideal para untar.<br><br>
+<b>Miel blanca de Mezquite 500g</b><br>
+Espesa, ideal para maridaje de quesos y glaseados.<br><br>
 <b>Café · Tetela del Volcán</b><br>
 Café orgánico de cosecha familiar del sur de la Ciudad de México, en las faldas del Popocatépetl, en Morelos.<br><br>
-<small>Próximamente disponibles para agregar a tu hielera.</small>
-</div>
-</div>
+<small>Próximamente disponible para agregar a tu hielera.</small>
+</div></div>
 </div>
 
 <!-- NUEVO: OPCIONES DE ENTREGA -->
@@ -209,6 +222,8 @@ const huevoProds=[["HUEVO PZA",7,"huevo.jpg"]];
 const pavoProds=[["HAMB PAVO 4pzas",315,"hamburguesapavo.jpg"],["MOLIDA PAVO 500g",247,"molidapavo.jpg"],["PAVO TG (APARTADO) - $350 POR KILO",350,"pavoTG.jpg"]];
 const resProds=[["ARRACHERA 500g",336,"arrachera.jpg"],["BISTEC 500g",336,"bistec.jpg"],["CECINA 500g",350,"cecina.jpg"],["CHORIZO 500g",241,"chorizo.jpg"],["BABYBACK 1kg",460,"costillas.jpg"],["FILETE 500g",404,"filete.jpg"],["LOMO 500g",263,"lomo.jpg"],["MILANESA 500g",341,"milanesa.jpg"],["MOLIDA 500g",252,"molida.jpg"],["MOLIDA DIEZMILLO 500g",336,"molidadiezmillo.jpg"],["PICANA 500g",322,"picana.jpg"],["RETAZO 500g",216,"retazo.jpg"],["SIRLOIN 500g",350,"sirloin.jpg"],["TOCINO 250g",299,"tocino.jpg"],["GAONERA DE RIBEYE 500g",380,"gaoneraribeye.jpeg"]];
 const mascotaProds=[["MEZCLA DE POLLO PARA MASCOTAS 500g",75,"pollomascotas.jpg"]];
+const mielProds=[["MIEL LÍQUIDA MULTIFLORA 500g",250,"miel liquida multiflora.jpg"],["MIEL MANTEQUILLA DE CAZAHUATE 500g",250,"miel mantequilla cazahuate.jpg"],["MIEL BLANCA DE MEZQUITE 500g",250,"miel blanca mezquita.jpg"]];
+const alacenaProds=[...mielProds];
 const resDomesticosProds=[["ARRACHERA MARINADA 500g PREMIUM",389,"arracheramarinada.jpg"],["BISTECK 500g PREMIUM 5 PZS",247,"bistecrescongelado.jpg"],["CALDO DE HUESOS 500ml",205,"caldodehuesos500.jpg"],["CARNE P/ DESHEBRAR DE PIERNA 500g",226,"carnedeshebrar.jpg"],["HAMBURGUESA 400g PREMIUM 4 PZS",252,"hamburguesaprime.jpg"],["MOLIDA DE RES 500g 95/5 PREMIUM",268,"hamburguesaprime.jpg"],["MILANESA 500g PREMIUM 4 PZS",273,"milanesaderescongelada.jpg"],["FILETE EN TROZO PREMIUM 500g",310,"fileterescongelado.jpg"]];
 const cerdoDomesticosProds=[["BISTEC LOMO 500g PREMIUM 5 PZS",210,"bistecdelomodecerdo.jpg"],["CHORIZO ESPAÑOL 350g PREMIUM 3 PZS",278,"chorizocongelado.jpg"],["SALCHICHA DESAYUNO 350g 9 PZS",289,"salchicha.jpg"],["TOCINO AHUMADO 350g PREMIUM",420,"tocinoahumado.jpg"],["COSTILLA P/ ASAR 1kg PREMIUM",399,"costillaasar1kg.jpg"]];
 const resCongeladaProds=[...resDomesticosProds,...cerdoDomesticosProds];
@@ -247,6 +262,7 @@ addGrid('grid-pollo', polloProds);
 addGrid('grid-huevo', huevoProds);
 addGrid('grid-pavo', pavoProds);
 addGrid('grid-mascotas', mascotaProds);
+addGrid('grid-miel', alacenaProds);
 
 function addP(name,price){ let f=cart.find(c=>c.name===name); if(f) f.qty++; else cart.push({name,price,qty:1}); render(); }
 function render(){
