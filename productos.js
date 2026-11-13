@@ -62,4 +62,12 @@ const cerdoDomesticosProds=[
 ];
 
 const resCongeladaProds = [...resDomesticosProds, ...cerdoDomesticosProds];
-const alacenaProds = [];
+
+// MIEL - SAN ANDRÉS DE LA CAL
+const mielProds=[
+["MIEL LÍQUIDA MULTIFLORA 500g",250,"miel liquida multiflora.jpg"],
+["MIEL MANTEQUILLA DE CAZAHUATE 500g",250,"miel mantequilla cazahuate.jpg"],
+["MIEL BLANCA DE MEZQUITE 500g",250,"miel blanca mezquita.jpg"]
+];
+
+const alacenaProds = [...mielProds];
