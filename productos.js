@@ -7,6 +7,7 @@ const polloProds=[
 ["FAJITAS POLLO 500g",200,"fajitaspollo.jpg"],
 ["PIERNA C/MUSLO 550g",137,"piernaconmuslo.jpg"],
 ["PIERNA 500g",105,"piernapollo.jpg"],
+["MUSLO C/HUESO 550g 3pzas",168,"muslopollo.jpg"],
 ["MILANESA POLLO 500g",263,"milanesadepollo.jpg"],
 ["MOLIDA POLLO 500g",150,"molidapollo.jpg"],
 ["HAMB POLLO 4pzas",252,"hamburguesapollo.jpg"],
